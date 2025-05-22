@@ -709,7 +709,7 @@ export default function ZulePfpGenerator() {
                   size="sm"
                   className="border-[#1a2436] text-gray-200 hover:bg-[#1a2436] hover:text-white font-mono"
                   onClick={() =>
-                            handleDownload(generatedImage, username)
+                            handleDownload(selectedGalleryItem.imageUrl, selectedGalleryItem.username)
                           }
                 >
                   <Download className="h-4 w-4 mr-1" />
