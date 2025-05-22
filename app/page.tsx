@@ -525,7 +525,7 @@ const downloadImage = async (imageUrl, fileName = "zule-pfp.png") => {
         <div className="w-full mb-16">
           <h2 className="text-2xl font-bold text-[#5CEFFF] mb-8 text-center tracking-wider">Community Gallery</h2>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4 md:gap-6">
             {galleryItems.map((item) => (
               <div
                 key={item.id}
