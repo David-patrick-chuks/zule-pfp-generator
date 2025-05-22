@@ -193,36 +193,100 @@ export default function ZulePfpGenerator() {
     setSelectedGalleryItem(galleryItems[newIndex]);
   };
 
-  const handleShare = () => {
-    const shareText = `I just generated my ZULE Raider PFP! Check out the ZULE Raider PFP Generator:`;
-    const shareUrl = window.location.href;
+const handleShare = (imageUrl, username) => {
+  const shareText = `I just generated my ZULE Raider PFP as ${username}! Check it out at:`;
+  const url = encodeURIComponent(window.location.href);
+  const text = encodeURIComponent(shareText);
 
-    if (navigator.share) {
-      navigator
-        .share({
-          title: "ZULE Raider PFP Generator",
-          text: shareText,
-          url: shareUrl,
-        })
-        .catch((error) => console.log("Error sharing:", error));
-    } else {
-      const shareData = `${shareText} ${shareUrl}`;
-      navigator.clipboard
-        .writeText(shareData)
-        .then(() => {
-          setAlerts((prevAlerts) => [
-            ...prevAlerts,
-            {
-              id: Date.now(),
-              username: "System",
-              timeAgo: "just now",
-              message: "Share link copied to clipboard!",
-            },
-          ]);
-        })
-        .catch((err) => {
-          console.error("Failed to copy: ", err);
-        });
+  // Try using navigator.share for mobile devices
+  if (navigator.share) {
+    navigator
+      .share({
+        title: "ZULE Raider PFP Generator",
+        text: shareText,
+        url: window.location.href,
+      })
+      .then(() => {
+        setAlerts((prevAlerts) => [
+          ...prevAlerts,
+          {
+            id: Date.now(),
+            username: "System",
+            timeAgo: "just now",
+            message: "Shared successfully!",
+          },
+        ]);
+      })
+      .catch((error) => {
+        console.error("Error sharing:", error);
+        // Fallback to Twitter intent if navigator.share fails
+        window.open(
+          `https://twitter.com/intent/tweet?text=${text}&url=${url}`,
+          "_blank"
+        );
+        setAlerts((prevAlerts) => [
+          ...prevAlerts,
+          {
+            id: Date.now(),
+            username: "System",
+            timeAgo: "just now",
+            message: "Opened Twitter to share your PFP!",
+          },
+        ]);
+      });
+  } else {
+    // Fallback for desktop: Open Twitter intent
+    window.open(
+      `https://twitter.com/intent/tweet?text=${text}&url=${url}`,
+      "_blank"
+    );
+    setAlerts((prevAlerts) => [
+      ...prevAlerts,
+      {
+        id: Date.now(),
+        username: "System",
+        timeAgo: "just now",
+        message: "Opened Twitter to share your PFP!",
+      },
+    ]);
+  }
+};
+
+  // Download function
+const downloadImage = async (imageUrl, fileName = "zule-pfp.png") => {
+  try {
+    const response = await fetch(imageUrl, { mode: "cors" });
+    if (!response.ok) throw new Error("Failed to fetch image");
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Error downloading image:", error);
+    return { error: "Failed to download image. Please try again." };
+  }
+};
+
+
+
+  // Handle download with error alert
+  const handleDownload = async (imageUrl, username) => {
+    const result = await downloadImage(imageUrl, `${username || "zule"}-pfp.png`);
+    if (result?.error) {
+      setAlerts((prevAlerts) => [
+        ...prevAlerts,
+        {
+          id: Date.now(),
+          username: "System",
+          timeAgo: "just now",
+          message: result.error,
+        },
+      ]);
     }
   };
 
@@ -404,7 +468,7 @@ export default function ZulePfpGenerator() {
                           size="sm"
                           variant="outline"
                           className="border-[#1a2436] text-gray-200 hover:bg-[#1a2436] hover:text-white font-mono"
-                          onClick={() => window.open(generatedImage, "_blank")}
+                            onClick={() => handleDownload(generatedImage, username)}
                         >
                           <Download className="h-4 w-4 mr-1" />
                           Download
@@ -449,7 +513,7 @@ export default function ZulePfpGenerator() {
                   )}
                 </div>
                 <div className="mt-4 text-center text-gray-300 text-sm font-mono">
-                  {generatedImage && "Your ZULE Raider is ready to deploy"}
+                  {generatedImage && "Your ZULE Raider PFP is ready!"}
                 </div>
               </div>
             </div>
