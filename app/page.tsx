@@ -77,7 +77,7 @@ export default function ZulePfpGenerator() {
     setAlerts((prevAlerts) => {
       // Limit to 2 alerts: if length is 2 or more, remove the oldest (first) alert
       const updatedAlerts =
-        prevAlerts.length >= 2 ? prevAlerts.slice(1) : prevAlerts;
+        prevAlerts.length >= 1 ? prevAlerts.slice(1) : prevAlerts;
       return [...updatedAlerts, newAlert];
     });
 
@@ -403,7 +403,7 @@ export default function ZulePfpGenerator() {
                     placeholder="e.g., RaiderJoe"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="bg-[#0a0e17] border-[#1a2436] text-white focus:border-[#5CEFFF] focus:ring-0 font-mono"
+                    className="bg-[#0a0e17]  border-[#1a2436] text-white focus:border-[#5CEFFF] focus:ring-0 font-mono"
                   />
                 </div>
 
