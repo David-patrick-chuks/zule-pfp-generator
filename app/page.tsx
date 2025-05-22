@@ -382,7 +382,7 @@ export default function ZulePfpGenerator() {
                       </div>
                     </div>
                   ) : (
-                    <div className="text-center p-6 text-gray-400 font-mono">
+                    <div className="text-center p-6 flex flex-col justify-center items-center text-gray-400 font-mono">
                       <div className="mb-4 opacity-50">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
