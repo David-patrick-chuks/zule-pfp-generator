@@ -1,170 +1,202 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import Image from "next/image"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { AlertCircle, X, ChevronLeft, ChevronRight, Download, Share2 } from "lucide-react"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-
-// Sample data for community gallery
-const sampleGallery = [
-  { id: 1, username: "ZuleWarrior", inscription: "ZULE Army", imageUrl: "/placeholder.svg?height=300&width=300" },
-  { id: 2, username: "CryptoRaider", inscription: "Buy $ZULE Now!", imageUrl: "/placeholder.svg?height=300&width=300" },
-  {
-    id: 3,
-    username: "TokenHunter",
-    inscription: "In ZULE We Trust",
-    imageUrl: "/placeholder.svg?height=300&width=300",
-  },
-  { id: 4, username: "MoonShot", inscription: "Raid Ready", imageUrl: "/placeholder.svg?height=300&width=300" },
-  { id: 5, username: "DiamondHands", inscription: "ZULE Gang", imageUrl: "/placeholder.svg?height=300&width=300" },
-  { id: 6, username: "CoinCollector", inscription: "Hold the Line", imageUrl: "/placeholder.svg?height=300&width=300" },
-  { id: 7, username: "BlockchainBro", inscription: "ZULE Army", imageUrl: "/placeholder.svg?height=300&width=300" },
-  { id: 8, username: "SatoshiFan", inscription: "Buy $ZULE Now!", imageUrl: "/placeholder.svg?height=300&width=300" },
-]
-
-// Sample usernames for live alerts
-const sampleUsernames = [
-  "ZuleWarrior",
-  "CryptoRaider",
-  "TokenHunter",
-  "MoonShot",
-  "DiamondHands",
-  "CoinCollector",
-  "BlockchainBro",
-  "SatoshiFan",
-  "CryptoQueen",
-  "TokenKing",
-  "ZuleHodler",
-  "MemeGod",
-  "RaidLeader",
-  "ZuleWhale",
-  "CryptoNinja",
-]
+import { useState, useEffect, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import Image from "next/image";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertCircle, X, ChevronLeft, ChevronRight, Download, Share2 } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function ZulePfpGenerator() {
-  const [username, setUsername] = useState("")
-  const [inscription, setInscription] = useState("")
-  const [hatColor, setHatColor] = useState("")
-  const [gender, setGender] = useState("")
-  const [description, setDescription] = useState("")
-  const [customColor, setCustomColor] = useState("#5CEFFF")
-  const [isCustomColor, setIsCustomColor] = useState(false)
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [generatedImage, setGeneratedImage] = useState("")
-  const [alerts, setAlerts] = useState([])
-  const [galleryItems, setGalleryItems] = useState(sampleGallery.slice(0, 8))
-  const [showMore, setShowMore] = useState(true)
-  const [selectedGalleryItem, setSelectedGalleryItem] = useState(null)
-  const alertsContainerRef = useRef(null)
+  const [username, setUsername] = useState("");
+  const [inscription, setInscription] = useState("");
+  const [hatColor, setHatColor] = useState("");
+  const [gender, setGender] = useState("");
+  const [description, setDescription] = useState("");
+  const [customColor, setCustomColor] = useState("#5CEFFF");
+  const [isCustomColor, setIsCustomColor] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedImage, setGeneratedImage] = useState("");
+  const [alerts, setAlerts] = useState([]);
+  const [galleryItems, setGalleryItems] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [selectedGalleryItem, setSelectedGalleryItem] = useState(null);
+  const alertsContainerRef = useRef(null);
 
-  // Function to generate a random alert
+  // Backend API base URL
+  const API_BASE_URL = "https://zule-pfp-backend.onrender.com";
+
+  // Function to generate a random alert (keeping for user experience)
   const generateRandomAlert = () => {
-    const randomUsername = sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)]
-    const randomTime = Math.floor(Math.random() * 60) + 1
+    const sampleUsernames = [
+      "ZuleWarrior",
+      "CryptoRaider",
+      "TokenHunter",
+      "MoonShot",
+      "DiamondHands",
+      "CoinCollector",
+      "BlockchainBro",
+      "SatoshiFan",
+      "CryptoQueen",
+      "TokenKing",
+    ];
+    const randomUsername = sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)];
+    const randomTime = Math.floor(Math.random() * 60) + 1;
     const newAlert = {
       id: Date.now(),
       username: randomUsername,
       timeAgo: `${randomTime} seconds ago`,
-    }
+    };
 
-    setAlerts((prevAlerts) => [...prevAlerts, newAlert])
+    setAlerts((prevAlerts) => [...prevAlerts, newAlert]);
 
-    // Remove alert after 5 seconds
     setTimeout(() => {
-      setAlerts((prevAlerts) => prevAlerts.filter((alert) => alert.id !== newAlert.id))
-    }, 5000)
+      setAlerts((prevAlerts) => prevAlerts.filter((alert) => alert.id !== newAlert.id));
+    }, 5000);
+  };
+
+  // Generate random alerts
+  useEffect(() => {
+    for (let i = 0; i < 3; i++) {
+      setTimeout(() => generateRandomAlert(), i * 1000);
+    }
+    const interval = setInterval(() => {
+      generateRandomAlert();
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Fetch gallery items from backend
+  useEffect(() => {
+    fetchGallery();
+  }, [currentPage]);
+
+  async function fetchGallery() {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/gallery?page=${currentPage}`);
+      if (!res.ok) throw new Error("Failed to fetch gallery");
+      const { total, items } = await res.json();
+      setGalleryItems(items);
+      setTotalItems(total);
+    } catch (error) {
+      console.error("Error loading gallery:", error);
+      setAlerts((prevAlerts) => [
+        ...prevAlerts,
+        {
+          id: Date.now(),
+          username: "System",
+          timeAgo: "just now",
+          message: "Failed to load gallery. Please try again.",
+        },
+      ]);
+    }
   }
 
-  // Generate random alerts frequently
-  useEffect(() => {
-    // Initial alerts
-    for (let i = 0; i < 3; i++) {
-      setTimeout(() => generateRandomAlert(), i * 1000)
-    }
-
-    // Continuous alerts
-    const interval = setInterval(() => {
-      generateRandomAlert()
-    }, 3000) // Every 3 seconds
-
-    return () => clearInterval(interval)
-  }, [])
-
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!username) {
-      alert("Please enter a username")
-      return
+      setAlerts((prevAlerts) => [
+        ...prevAlerts,
+        {
+          id: Date.now(),
+          username: "System",
+          timeAgo: "just now",
+          message: "Please enter a username",
+        },
+      ]);
+      return;
     }
 
-    setIsGenerating(true)
-    // Simulate generation delay
-    setTimeout(() => {
-      setGeneratedImage("/placeholder.svg?height=400&width=400")
-      setIsGenerating(false)
+    setIsGenerating(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/generate-image`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          inscription: inscription || "ZULE Army",
+          hatColor: isCustomColor ? "custom" : hatColor,
+          gender,
+          description: description || "A crypto raider repping ZULE",
+          customColor: isCustomColor ? customColor : undefined,
+        }),
+      });
 
-      // Add user's own alert
-      const newAlert = {
-        id: Date.now(),
-        username: username,
-        timeAgo: "just now",
+      if (!response.ok) {
+        throw new Error("Failed to generate image");
       }
-      setAlerts((prevAlerts) => [...prevAlerts, newAlert])
+
+      const data = await response.json();
+      setGeneratedImage(data.imageUrl);
+      setGalleryItems((prev) => [data.galleryItem, ...prev]);
+
+      // Add success alert
+      setAlerts((prevAlerts) => [
+        ...prevAlerts,
+        {
+          id: Date.now(),
+          username,
+          timeAgo: "just now",
+          message: "PFP generated successfully!",
+        },
+      ]);
 
       // Remove alert after 5 seconds
       setTimeout(() => {
-        setAlerts((prevAlerts) => prevAlerts.filter((alert) => alert.id !== newAlert.id))
-      }, 5000)
-
-      // Add to gallery
-      const newItem = {
-        id: galleryItems.length + 1,
-        username: username,
-        inscription: inscription || "ZULE Army",
-        imageUrl: "/placeholder.svg?height=300&width=300",
-      }
-
-      setGalleryItems((prev) => [newItem, ...prev])
-    }, 1500)
-  }
+        setAlerts((prevAlerts) => prevAlerts.filter((alert) => alert.message !== "PFP generated successfully!"));
+      }, 5000);
+    } catch (error) {
+      console.error("Error generating image:", error);
+      setAlerts((prevAlerts) => [
+        ...prevAlerts,
+        {
+          id: Date.now(),
+          username: "System",
+          timeAgo: "just now",
+          message: "Failed to generate PFP. Please try again.",
+        },
+      ]);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   const handleShowMore = () => {
-    if (galleryItems.length < sampleGallery.length) {
-      setGalleryItems(sampleGallery)
-      setShowMore(false)
+    if (galleryItems.length < totalItems) {
+      setCurrentPage((prev) => prev + 1);
     }
-  }
+  };
 
   const handleGalleryItemClick = (item) => {
-    setSelectedGalleryItem(item)
-  }
+    setSelectedGalleryItem(item);
+  };
 
   const navigateGallery = (direction) => {
-    if (!selectedGalleryItem) return
+    if (!selectedGalleryItem) return;
 
-    const currentIndex = galleryItems.findIndex((item) => item.id === selectedGalleryItem.id)
-    let newIndex
+    const currentIndex = galleryItems.findIndex((item) => item.id === selectedGalleryItem.id);
+    let newIndex;
 
     if (direction === "next") {
-      newIndex = (currentIndex + 1) % galleryItems.length
+      newIndex = (currentIndex + 1) % galleryItems.length;
     } else {
-      newIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length
+      newIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
     }
 
-    setSelectedGalleryItem(galleryItems[newIndex])
-  }
+    setSelectedGalleryItem(galleryItems[newIndex]);
+  };
 
   const handleShare = () => {
-    const shareText = `I just generated my ZULE Raider PFP! Check out the ZULE Raider PFP Generator:`
-    const shareUrl = window.location.href
+    const shareText = `I just generated my ZULE Raider PFP! Check out the ZULE Raider PFP Generator:`;
+    const shareUrl = window.location.href;
 
-    // For mobile devices
     if (navigator.share) {
       navigator
         .share({
@@ -172,21 +204,27 @@ export default function ZulePfpGenerator() {
           text: shareText,
           url: shareUrl,
         })
-        .catch((error) => console.log("Error sharing:", error))
-    }
-    // Fallback for desktop
-    else {
-      const shareData = `${shareText} ${shareUrl}`
+        .catch((error) => console.log("Error sharing:", error));
+    } else {
+      const shareData = `${shareText} ${shareUrl}`;
       navigator.clipboard
         .writeText(shareData)
         .then(() => {
-          alert("Share text copied to clipboard!")
+          setAlerts((prevAlerts) => [
+            ...prevAlerts,
+            {
+              id: Date.now(),
+              username: "System",
+              timeAgo: "just now",
+              message: "Share link copied to clipboard!",
+            },
+          ]);
         })
         .catch((err) => {
-          console.error("Failed to copy: ", err)
-        })
+          console.error("Failed to copy: ", err);
+        });
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0a0e17]">
@@ -201,7 +239,7 @@ export default function ZulePfpGenerator() {
               <AlertCircle className="h-4 w-4 text-[#5CEFFF]" />
               <AlertDescription className="flex items-center font-mono text-sm">
                 <span className="text-[#5CEFFF] font-medium mr-1">{alert.username}</span>
-                <span className="text-gray-300">generated a PFP {alert.timeAgo}</span>
+                <span className="text-gray-300">{alert.message || `generated a PFP ${alert.timeAgo}`}</span>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -270,8 +308,8 @@ export default function ZulePfpGenerator() {
                   <Select
                     value={hatColor}
                     onValueChange={(value) => {
-                      setHatColor(value)
-                      setIsCustomColor(value === "custom")
+                      setHatColor(value);
+                      setIsCustomColor(value === "custom");
                     }}
                   >
                     <SelectTrigger className="bg-[#0a0e17] border-[#1a2436] text-white focus:ring-0 font-mono">
@@ -366,6 +404,7 @@ export default function ZulePfpGenerator() {
                           size="sm"
                           variant="outline"
                           className="border-[#1a2436] text-gray-200 hover:bg-[#1a2436] hover:text-white font-mono"
+                          onClick={() => window.open(generatedImage, "_blank")}
                         >
                           <Download className="h-4 w-4 mr-1" />
                           Download
@@ -441,7 +480,7 @@ export default function ZulePfpGenerator() {
             ))}
           </div>
 
-          {showMore && (
+          {galleryItems.length < totalItems && (
             <div className="flex justify-center mt-8">
               <Button
                 onClick={handleShowMore}
@@ -490,6 +529,7 @@ export default function ZulePfpGenerator() {
                   variant="outline"
                   size="sm"
                   className="border-[#1a2436] text-gray-200 hover:bg-[#1a2436] hover:text-white font-mono"
+                  onClick={() => window.open(selectedGalleryItem?.imageUrl, "_blank")}
                 >
                   <Download className="h-4 w-4 mr-1" />
                   Download
@@ -519,13 +559,11 @@ export default function ZulePfpGenerator() {
       </main>
 
       <footer className="relative z-10 text-center py-6 px-4 text-gray-500 text-sm border-t border-[#1a2436] font-mono">
-            {/* Copyright */}
-          <p className="text-gray-500 text-sm font-jetbrains">
-            © {new Date().getFullYear()} ZULE AI. All rights reserved.
-          </p>
-          <p className="mt-4 text-xs text-gray-700 font-jetbrains">Powered by the shadows</p>
-      
+        <p className="text-gray-500 text-sm font-jetbrains">
+          © {new Date().getFullYear()} ZULE AI. All rights reserved.
+        </p>
+        <p className="mt-4 text-xs text-gray-700 font-jetbrains">Powered by the shadows</p>
       </footer>
     </div>
-  )
+  );
 }
