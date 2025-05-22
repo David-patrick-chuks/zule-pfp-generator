@@ -5,11 +5,30 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { AlertCircle, X, ChevronLeft, ChevronRight, Download, Share2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  AlertCircle,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  Share2,
+} from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function ZulePfpGenerator() {
@@ -32,64 +51,69 @@ export default function ZulePfpGenerator() {
   // Backend API base URL
   const API_BASE_URL = "https://zule-pfp-backend.onrender.com";
 
-  
   // Function to generate a random alert
-const generateRandomAlert = () => {
-  const sampleUsernames = [
-    "ZuleWarrior",
-    "CryptoRaider",
-    "TokenHunter",
-    "MoonShot",
-    "DiamondHands",
-    "CoinCollector",
-    "BlockchainBro",
-    "SatoshiFan",
-    "CryptoQueen",
-    "TokenKing",
-  ];
-  const randomUsername = sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)];
-  const randomTime = Math.floor(Math.random() * 60) + 1;
-  const newAlert = {
-    id: Date.now(),
-    username: randomUsername,
-    timeAgo: `${randomTime} seconds ago`,
+  const generateRandomAlert = () => {
+    const sampleUsernames = [
+      "ZuleWarrior",
+      "CryptoRaider",
+      "TokenHunter",
+      "MoonShot",
+      "DiamondHands",
+      "CoinCollector",
+      "BlockchainBro",
+      "SatoshiFan",
+      "CryptoQueen",
+      "TokenKing",
+    ];
+    const randomUsername =
+      sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)];
+    const randomTime = Math.floor(Math.random() * 60) + 1;
+    const newAlert = {
+      id: Date.now(),
+      username: randomUsername,
+      timeAgo: `${randomTime} seconds ago`,
+    };
+
+    setAlerts((prevAlerts) => {
+      // Limit to 2 alerts: if length is 2 or more, remove the oldest (first) alert
+      const updatedAlerts =
+        prevAlerts.length >= 2 ? prevAlerts.slice(1) : prevAlerts;
+      return [...updatedAlerts, newAlert];
+    });
+
+    // Remove alert after 8 seconds
+    setTimeout(() => {
+      setAlerts((prevAlerts) =>
+        prevAlerts.filter((alert) => alert.id !== newAlert.id)
+      );
+    }, 8000);
   };
 
-  setAlerts((prevAlerts) => {
-    // Limit to 2 alerts: if length is 2 or more, remove the oldest (first) alert
-    const updatedAlerts = prevAlerts.length >= 2 ? prevAlerts.slice(1) : prevAlerts;
-    return [...updatedAlerts, newAlert];
-  });
+  // Generate initial alerts and set interval
+  useEffect(() => {
+    // Generate up to 2 initial alerts
+    for (let i = 0; i < 2; i++) {
+      setTimeout(() => generateRandomAlert(), i * 2000);
+    }
 
-  // Remove alert after 8 seconds
-  setTimeout(() => {
-    setAlerts((prevAlerts) => prevAlerts.filter((alert) => alert.id !== newAlert.id));
-  }, 8000);
-};
+    // Set interval for new alerts
+    const interval = setInterval(() => {
+      generateRandomAlert();
+    }, 5000);
 
-// Generate initial alerts and set interval
-useEffect(() => {
-  // Generate up to 2 initial alerts
-  for (let i = 0; i < 2; i++) {
-    setTimeout(() => generateRandomAlert(), i * 2000);
-  }
-
-  // Set interval for new alerts
-  const interval = setInterval(() => {
-    generateRandomAlert();
-  }, 5000);
-
-  return () => clearInterval(interval);
-}, []);
+    return () => clearInterval(interval);
+  }, []);
 
   // Fetch gallery items from backend
   useEffect(() => {
     fetchGallery();
   }, [currentPage]);
 
-async function fetchGallery() {
+  async function fetchGallery() {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/gallery?page=${currentPage}`);
+      const res = await fetch(
+        `${API_BASE_URL}/api/gallery?page=${currentPage}`
+      );
       if (!res.ok) throw new Error("Failed to fetch gallery");
       const { total, items } = await res.json();
       setGalleryItems((prevItems) => [...prevItems, ...items]); // Append new items
@@ -160,7 +184,11 @@ async function fetchGallery() {
 
       // Remove alert after 5 seconds
       setTimeout(() => {
-        setAlerts((prevAlerts) => prevAlerts.filter((alert) => alert.message !== "PFP generated successfully!"));
+        setAlerts((prevAlerts) =>
+          prevAlerts.filter(
+            (alert) => alert.message !== "PFP generated successfully!"
+          )
+        );
       }, 5000);
     } catch (error) {
       console.error("Error generating image:", error);
@@ -184,7 +212,6 @@ async function fetchGallery() {
     }
   };
 
-
   const handleGalleryItemClick = (item) => {
     setSelectedGalleryItem(item);
   };
@@ -192,7 +219,9 @@ async function fetchGallery() {
   const navigateGallery = (direction) => {
     if (!selectedGalleryItem) return;
 
-    const currentIndex = galleryItems.findIndex((item) => item.id === selectedGalleryItem.id);
+    const currentIndex = galleryItems.findIndex(
+      (item) => item.id === selectedGalleryItem.id
+    );
     let newIndex;
 
     if (direction === "next") {
@@ -204,90 +233,91 @@ async function fetchGallery() {
     setSelectedGalleryItem(galleryItems[newIndex]);
   };
 
-const handleShare = (imageUrl, username) => {
-  const shareText = `I just generated my ZULE Raider PFP as ${username}! Check it out at:`;
-  const url = encodeURIComponent(window.location.href);
-  const text = encodeURIComponent(shareText);
+  const handleShare = (imageUrl, username) => {
+    const shareText = `I just generated my ZULE Raider PFP as ${username}! Check it out at:`;
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent(shareText);
 
-  // Try using navigator.share for mobile devices
-  if (navigator.share) {
-    navigator
-      .share({
-        title: "ZULE Raider PFP Generator",
-        text: shareText,
-        url: window.location.href,
-      })
-      .then(() => {
-        setAlerts((prevAlerts) => [
-          ...prevAlerts,
-          {
-            id: Date.now(),
-            username: "System",
-            timeAgo: "just now",
-            message: "Shared successfully!",
-          },
-        ]);
-      })
-      .catch((error) => {
-        console.error("Error sharing:", error);
-        // Fallback to Twitter intent if navigator.share fails
-        window.open(
-          `https://twitter.com/intent/tweet?text=${text}&url=${url}`,
-          "_blank"
-        );
-        setAlerts((prevAlerts) => [
-          ...prevAlerts,
-          {
-            id: Date.now(),
-            username: "System",
-            timeAgo: "just now",
-            message: "Opened Twitter to share your PFP!",
-          },
-        ]);
-      });
-  } else {
-    // Fallback for desktop: Open Twitter intent
-    window.open(
-      `https://twitter.com/intent/tweet?text=${text}&url=${url}`,
-      "_blank"
-    );
-    setAlerts((prevAlerts) => [
-      ...prevAlerts,
-      {
-        id: Date.now(),
-        username: "System",
-        timeAgo: "just now",
-        message: "Opened Twitter to share your PFP!",
-      },
-    ]);
-  }
-};
+    // Try using navigator.share for mobile devices
+    if (navigator.share) {
+      navigator
+        .share({
+          title: "ZULE Raider PFP Generator",
+          text: shareText,
+          url: window.location.href,
+        })
+        .then(() => {
+          setAlerts((prevAlerts) => [
+            ...prevAlerts,
+            {
+              id: Date.now(),
+              username: "System",
+              timeAgo: "just now",
+              message: "Shared successfully!",
+            },
+          ]);
+        })
+        .catch((error) => {
+          console.error("Error sharing:", error);
+          // Fallback to Twitter intent if navigator.share fails
+          window.open(
+            `https://twitter.com/intent/tweet?text=${text}&url=${url}`,
+            "_blank"
+          );
+          setAlerts((prevAlerts) => [
+            ...prevAlerts,
+            {
+              id: Date.now(),
+              username: "System",
+              timeAgo: "just now",
+              message: "Opened Twitter to share your PFP!",
+            },
+          ]);
+        });
+    } else {
+      // Fallback for desktop: Open Twitter intent
+      window.open(
+        `https://twitter.com/intent/tweet?text=${text}&url=${url}`,
+        "_blank"
+      );
+      setAlerts((prevAlerts) => [
+        ...prevAlerts,
+        {
+          id: Date.now(),
+          username: "System",
+          timeAgo: "just now",
+          message: "Opened Twitter to share your PFP!",
+        },
+      ]);
+    }
+  };
 
   // Download function
-const downloadImage = async (imageUrl, fileName = "zule-pfp.png") => {
-  try {
-    const response = await fetch(imageUrl, { mode: "cors" });
-    if (!response.ok) throw new Error("Failed to fetch image");
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
-  } catch (error) {
-    console.error("Error downloading image:", error);
-    return { error: "Failed to download image. Please try again." };
-  }
-};
-
-
+  const downloadImage = async (imageUrl, fileName = "zule-pfp.png") => {
+    try {
+      const response = await fetch(imageUrl, { mode: "cors" });
+      if (!response.ok) throw new Error("Failed to fetch image");
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading image:", error);
+      return { error: "Failed to download image. Please try again." };
+    }
+  };
 
   // Handle download with error alert
   const handleDownload = async (imageUrl, username) => {
-    const result = await downloadImage(imageUrl, `${username || "zule"}-pfp.png`);
+    const result = await downloadImage(
+      imageUrl,
+      `${username || "zule"}-pfp.png`
+    );
     if (result?.error) {
       setAlerts((prevAlerts) => [
         ...prevAlerts,
@@ -306,22 +336,33 @@ const downloadImage = async (imageUrl, fileName = "zule-pfp.png") => {
       {/* Live Alerts Container */}
       <div
         ref={alertsContainerRef}
-        className="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-md pointer-events-none"
+        className="fixed top-4 right-4 sm:top-6 sm:right-6 z-50 flex flex-col gap-2 max-w-[90%] sm:max-w-md pointer-events-none"
       >
         {alerts.map((alert) => (
-          <div key={alert.id} className="animate-in fade-in slide-in-from-right-5 duration-300 pointer-events-auto">
-            <Alert className="bg-[#0f1623] border border-[#1a2436] text-white">
-              <AlertCircle className="h-4 w-4 text-[#5CEFFF]" />
-              <AlertDescription className="flex items-center font-mono text-sm">
-                <span className="text-[#5CEFFF] font-medium mr-1">{alert.username}</span>
-                <span className="text-gray-300">{alert.message || `generated a PFP ${alert.timeAgo}`}</span>
+          <div
+            key={alert.id}
+            className="animate-in fade-in slide-in-from-right-5 duration-300 pointer-events-auto w-full sm:w-auto"
+          >
+            <Alert className="bg-[#0f1623] border border-[#1a2436] text-white py-2 sm:py-3 px-3 sm:px-4">
+              <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4 text-[#5CEFFF] flex-shrink-0" />
+              <AlertDescription className="flex items-center font-mono text-xs sm:text-sm ml-2">
+                <span className="text-[#5CEFFF] font-medium mr-1">
+                  {alert.username}
+                </span>
+                <span className="text-gray-300">
+                  {alert.message || `generated a PFP ${alert.timeAgo}`}
+                </span>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="ml-auto -mr-2 h-6 w-6 text-gray-400 hover:text-white hover:bg-[#1a2436]"
-                  onClick={() => setAlerts((prevAlerts) => prevAlerts.filter((a) => a.id !== alert.id))}
+                  className="ml-auto -mr-1 sm:-mr-2 h-5 w-5 sm:h-6 sm:w-6 text-gray-400 hover:text-white hover:bg-[#1a2436]"
+                  onClick={() =>
+                    setAlerts((prevAlerts) =>
+                      prevAlerts.filter((a) => a.id !== alert.id)
+                    )
+                  }
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>
               </AlertDescription>
             </Alert>
@@ -330,22 +371,31 @@ const downloadImage = async (imageUrl, fileName = "zule-pfp.png") => {
       </div>
 
       <header className="relative z-10 text-center py-10 px-4 border-b border-[#1a2436]">
-        <h1 className="text-4xl md:text-5xl font-bold text-[#5CEFFF] mb-2 tracking-wider">ZULE Raider PFP Generator</h1>
-        <p className="text-gray-300 max-w-2xl mx-auto">Customize your character and rep the $ZULE token with style!</p>
+        <h1 className="text-4xl md:text-5xl font-bold text-[#5CEFFF] mb-2 tracking-wider">
+          ZULE Raider PFP Generator
+        </h1>
+        <p className="text-gray-300 max-w-2xl mx-auto">
+          Customize your character and rep the $ZULE token with style!
+        </p>
       </header>
 
       <main className="flex-1 flex flex-col items-center px-6 md:px-8 lg:px-12 py-10 relative z-10 max-w-7xl mx-auto w-full">
         {/* Main Form Card */}
         <Card className="w-full bg-[#0f1623] border border-[#1a2436] text-white mb-16">
           <CardHeader className="border-b border-[#1a2436]">
-            <CardTitle className="text-center text-[#5CEFFF] text-2xl">Create Your Raider</CardTitle>
+            <CardTitle className="text-center text-[#5CEFFF] text-2xl">
+              Create Your Raider
+            </CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Form Section */}
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="username" className="text-gray-200 font-medium">
+                  <Label
+                    htmlFor="username"
+                    className="text-gray-200 font-medium"
+                  >
                     Username
                   </Label>
                   <Input
@@ -358,7 +408,10 @@ const downloadImage = async (imageUrl, fileName = "zule-pfp.png") => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="inscription" className="text-gray-200 font-medium">
+                  <Label
+                    htmlFor="inscription"
+                    className="text-gray-200 font-medium"
+                  >
                     Choose Face Cap Inscription
                   </Label>
                   <Select value={inscription} onValueChange={setInscription}>
@@ -377,7 +430,10 @@ const downloadImage = async (imageUrl, fileName = "zule-pfp.png") => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="hatColor" className="text-gray-200 font-medium">
+                  <Label
+                    htmlFor="hatColor"
+                    className="text-gray-200 font-medium"
+                  >
                     Hat Color
                   </Label>
                   <Select
@@ -402,7 +458,10 @@ const downloadImage = async (imageUrl, fileName = "zule-pfp.png") => {
 
                   {isCustomColor && (
                     <div className="pt-2">
-                      <Label htmlFor="customColor" className="text-gray-200 text-sm font-medium">
+                      <Label
+                        htmlFor="customColor"
+                        className="text-gray-200 text-sm font-medium"
+                      >
                         Custom Color
                       </Label>
                       <div className="flex gap-2 mt-1">
@@ -442,7 +501,10 @@ const downloadImage = async (imageUrl, fileName = "zule-pfp.png") => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="description" className="text-gray-200 font-medium">
+                  <Label
+                    htmlFor="description"
+                    className="text-gray-200 font-medium"
+                  >
                     Describe the Character
                   </Label>
                   <Textarea
@@ -479,7 +541,9 @@ const downloadImage = async (imageUrl, fileName = "zule-pfp.png") => {
                           size="sm"
                           variant="outline"
                           className="border-[#1a2436] text-gray-200 hover:bg-[#1a2436] hover:text-white font-mono"
-                            onClick={() => handleDownload(generatedImage, username)}
+                          onClick={() =>
+                            handleDownload(generatedImage, username)
+                          }
                         >
                           <Download className="h-4 w-4 mr-1" />
                           Download
@@ -509,7 +573,14 @@ const downloadImage = async (imageUrl, fileName = "zule-pfp.png") => {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         >
-                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                          <rect
+                            x="3"
+                            y="3"
+                            width="18"
+                            height="18"
+                            rx="2"
+                            ry="2"
+                          />
                           <circle cx="8.5" cy="8.5" r="1.5" />
                           <polyline points="21 15 16 10 5 21" />
                         </svg>
@@ -533,7 +604,9 @@ const downloadImage = async (imageUrl, fileName = "zule-pfp.png") => {
 
         {/* Community Gallery Section */}
         <div className="w-full mb-16">
-          <h2 className="text-2xl font-bold text-[#5CEFFF] mb-8 text-center tracking-wider">Community Gallery</h2>
+          <h2 className="text-2xl font-bold text-[#5CEFFF] mb-8 text-center tracking-wider">
+            Community Gallery
+          </h2>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4 md:gap-6">
             {galleryItems.map((item) => (
@@ -550,12 +623,14 @@ const downloadImage = async (imageUrl, fileName = "zule-pfp.png") => {
                     className="object-cover"
                   />
                 </div>
-                <p className="mt-2 text-gray-300 capitalize text-sm font-medium font-mono">{item.username}</p>
+                <p className="mt-2 text-gray-300 capitalize text-sm font-medium font-mono">
+                  {item.username}
+                </p>
               </div>
             ))}
           </div>
 
-      {totalItems > 0 && galleryItems.length < totalItems && (
+          {totalItems > 0 && galleryItems.length < totalItems && (
             <div className="flex justify-center mt-8">
               <Button
                 onClick={handleShowMore}
@@ -569,10 +644,15 @@ const downloadImage = async (imageUrl, fileName = "zule-pfp.png") => {
         </div>
 
         {/* Gallery Modal */}
-        <Dialog open={!!selectedGalleryItem} onOpenChange={(open) => !open && setSelectedGalleryItem(null)}>
+        <Dialog
+          open={!!selectedGalleryItem}
+          onOpenChange={(open) => !open && setSelectedGalleryItem(null)}
+        >
           <DialogContent className="bg-[#0f1623] border border-[#1a2436] text-white max-w-2xl">
             <DialogHeader>
-              <DialogTitle className="text-[#5CEFFF] text-xl">{selectedGalleryItem?.username}'s PFP</DialogTitle>
+              <DialogTitle className="text-[#5CEFFF] text-xl">
+                {selectedGalleryItem?.username}'s PFP
+              </DialogTitle>
               <DialogDescription className="text-gray-400 font-mono">
                 Inscription: {selectedGalleryItem?.inscription}
               </DialogDescription>
@@ -604,7 +684,9 @@ const downloadImage = async (imageUrl, fileName = "zule-pfp.png") => {
                   variant="outline"
                   size="sm"
                   className="border-[#1a2436] text-gray-200 hover:bg-[#1a2436] hover:text-white font-mono"
-                  onClick={() => window.open(selectedGalleryItem?.imageUrl, "_blank")}
+                  onClick={() =>
+                    window.open(selectedGalleryItem?.imageUrl, "_blank")
+                  }
                 >
                   <Download className="h-4 w-4 mr-1" />
                   Download
@@ -637,7 +719,9 @@ const downloadImage = async (imageUrl, fileName = "zule-pfp.png") => {
         <p className="text-gray-500 text-sm font-jetbrains">
           © {new Date().getFullYear()} ZULE AI. All rights reserved.
         </p>
-        <p className="mt-4 text-xs text-gray-700 font-jetbrains">Powered by the shadows</p>
+        <p className="mt-4 text-xs text-gray-700 font-jetbrains">
+          Powered by the shadows
+        </p>
       </footer>
     </div>
   );
