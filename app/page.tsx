@@ -519,7 +519,12 @@ export default function ZulePfpGenerator() {
       </main>
 
       <footer className="relative z-10 text-center py-6 px-4 text-gray-500 text-sm border-t border-[#1a2436] font-mono">
-        Powered by V0 + AI. Not financial advice. Just meme magic.
+            {/* Copyright */}
+          <p className="text-gray-500 text-sm font-jetbrains">
+            © {new Date().getFullYear()} ZULE AI. All rights reserved.
+          </p>
+          <p className="mt-4 text-xs text-gray-700 font-jetbrains">Powered by the shadows</p>
+      
       </footer>
     </div>
   )
