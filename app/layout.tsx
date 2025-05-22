@@ -60,11 +60,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        {/* <link rel="icon" href="/favicon.png" /> */}
-        {/* Optional: add manifest.json if planning PWA support */}
-        {/* <link rel="manifest" href="/manifest.json" /> */}
-      </head>
       <body className={`${orbitron.variable} ${jetbrainsMono.variable} font-sans`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           {children}
