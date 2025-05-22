@@ -18,36 +18,40 @@ const jetbrainsMono = JetBrains_Mono({
 
 // ✅ Full SEO metadata object
 export const metadata: Metadata = {
-  title: "ZULE Raider PFP Generator",
-  description: "Customize your character and rep the $ZULE token with style!",
-  generator: "v0.dev",
-  keywords: ["ZULE", "meme coin", "PFP Generator", "crypto avatar", "ZULE raiders", "ZULE AI"],
+  title: "F*ck With ZULE – Raider PFP Generator",
+  description: "Slam that generate button and flex your wildest ZULE PFP. Not for normies.",
+  generator: "zuleai.xyz",
+  keywords: [
+    "ZULE", "shitcoin", "fuck with zule", "meme coin raiders", 
+    "sexy pfp generator", "crypto degenerates", "ZULE avatars"
+  ],
   themeColor: "#000000",
   icons: {
-    icon: "/favicon.ico",
+    icon: "/favicon.png",
   },
   openGraph: {
-    title: "ZULE Raider PFP Generator",
-    description: "Create custom crypto avatars with your own ZULE branding!",
+    title: "F*ck With ZULE – Raider PFP Generator",
+    description: "Generate spicy, badass PFPs for repping $ZULE like a true crypto degen.",
     url: "https://pfp.zuleai.xyz",
-    siteName: "ZULE Raider",
+    siteName: "ZULE Raiders",
     images: [
       {
-        url: "/og-image.png", // Make sure to place this image in public folder
+        url: "/zule.png",
         width: 1200,
         height: 630,
-        alt: "ZULE Raider PFP Generator",
+        alt: "Sexy ZULE Raider Generator",
       },
     ],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ZULE Raider PFP Generator",
-    description: "Create custom crypto avatars with your own ZULE branding!",
-    images: ["/og-image.png"],
+    title: "F*ck With ZULE – Raider PFP Generator",
+    description: "Get your sexy crypto identity. Generate a PFP. Shill hard. Stay filthy.",
+    images: ["/zule.png"],
   },
 }
+
 
 export default function RootLayout({
   children,
@@ -57,7 +61,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.png" />
         {/* Optional: add manifest.json if planning PWA support */}
         {/* <link rel="manifest" href="/manifest.json" /> */}
       </head>
