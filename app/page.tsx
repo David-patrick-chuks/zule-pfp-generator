@@ -32,45 +32,55 @@ export default function ZulePfpGenerator() {
   // Backend API base URL
   const API_BASE_URL = "https://zule-pfp-backend.onrender.com";
 
-  // Function to generate a random alert (keeping for user experience)
-  const generateRandomAlert = () => {
-    const sampleUsernames = [
-      "ZuleWarrior",
-      "CryptoRaider",
-      "TokenHunter",
-      "MoonShot",
-      "DiamondHands",
-      "CoinCollector",
-      "BlockchainBro",
-      "SatoshiFan",
-      "CryptoQueen",
-      "TokenKing",
-    ];
-    const randomUsername = sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)];
-    const randomTime = Math.floor(Math.random() * 60) + 1;
-    const newAlert = {
-      id: Date.now(),
-      username: randomUsername,
-      timeAgo: `${randomTime} seconds ago`,
-    };
-
-    setAlerts((prevAlerts) => [...prevAlerts, newAlert]);
-
-    setTimeout(() => {
-      setAlerts((prevAlerts) => prevAlerts.filter((alert) => alert.id !== newAlert.id));
-    }, 8000);
+  
+  // Function to generate a random alert
+const generateRandomAlert = () => {
+  const sampleUsernames = [
+    "ZuleWarrior",
+    "CryptoRaider",
+    "TokenHunter",
+    "MoonShot",
+    "DiamondHands",
+    "CoinCollector",
+    "BlockchainBro",
+    "SatoshiFan",
+    "CryptoQueen",
+    "TokenKing",
+  ];
+  const randomUsername = sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)];
+  const randomTime = Math.floor(Math.random() * 60) + 1;
+  const newAlert = {
+    id: Date.now(),
+    username: randomUsername,
+    timeAgo: `${randomTime} seconds ago`,
   };
 
-  // Generate random alerts
-  useEffect(() => {
-    for (let i = 0; i < 3; i++) {
-      setTimeout(() => generateRandomAlert(), i * 2000);
-    }
-    const interval = setInterval(() => {
-      generateRandomAlert();
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+  setAlerts((prevAlerts) => {
+    // Limit to 2 alerts: if length is 2 or more, remove the oldest (first) alert
+    const updatedAlerts = prevAlerts.length >= 2 ? prevAlerts.slice(1) : prevAlerts;
+    return [...updatedAlerts, newAlert];
+  });
+
+  // Remove alert after 8 seconds
+  setTimeout(() => {
+    setAlerts((prevAlerts) => prevAlerts.filter((alert) => alert.id !== newAlert.id));
+  }, 8000);
+};
+
+// Generate initial alerts and set interval
+useEffect(() => {
+  // Generate up to 2 initial alerts
+  for (let i = 0; i < 2; i++) {
+    setTimeout(() => generateRandomAlert(), i * 2000);
+  }
+
+  // Set interval for new alerts
+  const interval = setInterval(() => {
+    generateRandomAlert();
+  }, 5000);
+
+  return () => clearInterval(interval);
+}, []);
 
   // Fetch gallery items from backend
   useEffect(() => {
