@@ -539,7 +539,7 @@ const downloadImage = async (imageUrl, fileName = "zule-pfp.png") => {
                     className="object-cover"
                   />
                 </div>
-                <p className="mt-2 text-gray-300 text-sm font-medium font-mono">{item.username}</p>
+                <p className="mt-2 text-gray-300 capitalize text-sm font-medium font-mono">{item.username}</p>
               </div>
             ))}
           </div>
