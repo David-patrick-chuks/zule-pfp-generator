@@ -58,17 +58,17 @@ export default function ZulePfpGenerator() {
 
     setTimeout(() => {
       setAlerts((prevAlerts) => prevAlerts.filter((alert) => alert.id !== newAlert.id));
-    }, 5000);
+    }, 8000);
   };
 
   // Generate random alerts
   useEffect(() => {
     for (let i = 0; i < 3; i++) {
-      setTimeout(() => generateRandomAlert(), i * 1000);
+      setTimeout(() => generateRandomAlert(), i * 2000);
     }
     const interval = setInterval(() => {
       generateRandomAlert();
-    }, 3000);
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
