@@ -58,9 +58,9 @@ export default function ZulePfpGenerator() {
       "CryptoRaider",
       "TokenHunter",
       "MoonShot",
-      "DiamondHands",
-      "CoinCollector",
-      "BlockchainBro",
+      "DiaBabes",
+      "CoinManny",
+      "ChainBro",
       "SatoshiFan",
       "CryptoQueen",
       "TokenKing",
@@ -419,12 +419,55 @@ export default function ZulePfpGenerator() {
                       <SelectValue placeholder="Select inscription" />
                     </SelectTrigger>
                     <SelectContent className="bg-[#0f1623] border-[#1a2436] text-white font-mono">
-                      <SelectItem value="buy">Buy $ZULE Now!</SelectItem>
+                      {/* Aggressive and branded inscriptions */}
+                      <SelectItem value="buy">$ZULE or Nothing</SelectItem>
                       <SelectItem value="army">ZULE Army</SelectItem>
                       <SelectItem value="trust">In ZULE We Trust</SelectItem>
-                      <SelectItem value="raid">Raid Ready</SelectItem>
-                      <SelectItem value="gang">ZULE Gang</SelectItem>
-                      <SelectItem value="hold">Hold the Line</SelectItem>
+                      <SelectItem value="raid">Raid for $ZULE</SelectItem>
+                      <SelectItem value="gang">$ZULE Gang Only</SelectItem>
+                      <SelectItem value="hold">Hold the $ZULE Line</SelectItem>
+                      <SelectItem value="moon">
+                        Send $ZULE to the Moon
+                      </SelectItem>
+                      <SelectItem value="ape">Ape Into $ZULE</SelectItem>
+                      <SelectItem value="pump">Pump $ZULE Hard</SelectItem>
+                      <SelectItem value="storm">ZULE Storm Incoming</SelectItem>
+                      <SelectItem value="elite">ZULE Elite Unit</SelectItem>
+                      <SelectItem value="takeover">$ZULE Takeover</SelectItem>
+                      <SelectItem value="fuel">Fuel the $ZULE Raid</SelectItem>
+                      <SelectItem value="dominate">
+                        Dominate with $ZULE
+                      </SelectItem>
+
+                      {/* Extra aggressive, fully branded */}
+                      <SelectItem value="smash">Smash It for $ZULE</SelectItem>
+                      <SelectItem value="obliterate">
+                        Obliterate with $ZULE
+                      </SelectItem>
+                      <SelectItem value="fear">Fear the $ZULE</SelectItem>
+                      <SelectItem value="strike">
+                        Strike Fast, Strike $ZULE
+                      </SelectItem>
+                      <SelectItem value="ruthless">
+                        Ruthless for $ZULE
+                      </SelectItem>
+                      <SelectItem value="raidboss">ZULE Raid Boss</SelectItem>
+                      <SelectItem value="unstoppable">
+                        Unstoppable $ZULE
+                      </SelectItem>
+                      <SelectItem value="noescape">
+                        No Escape from $ZULE
+                      </SelectItem>
+                      <SelectItem value="reign">$ZULE Reign Begins</SelectItem>
+                      <SelectItem value="riot">Start the $ZULE Riot</SelectItem>
+                      <SelectItem value="fight">Fight for $ZULE</SelectItem>
+                      <SelectItem value="march">March with $ZULE</SelectItem>
+                      <SelectItem value="live">
+                        Live and Breathe $ZULE
+                      </SelectItem>
+                      <SelectItem value="death">
+                        Death Before Selling $ZULE
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -495,7 +538,6 @@ export default function ZulePfpGenerator() {
                       <SelectItem value="male">Male</SelectItem>
                       <SelectItem value="female">Female</SelectItem>
                       <SelectItem value="non-binary">Non-Binary</SelectItem>
-                      <SelectItem value="custom">Custom</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
