@@ -3,6 +3,7 @@ import "./globals.css"
 import { Orbitron, JetBrains_Mono } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import type { Metadata } from "next"
+import { Analytics } from "@vercel/analytics/next"
 
 const orbitron = Orbitron({
   subsets: ["latin"],
@@ -61,6 +62,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${orbitron.variable} ${jetbrainsMono.variable} font-sans`}>
+        <Analytics/>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           {children}
         </ThemeProvider>

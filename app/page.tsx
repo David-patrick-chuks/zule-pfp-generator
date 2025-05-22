@@ -418,57 +418,39 @@ export default function ZulePfpGenerator() {
                     <SelectTrigger className="bg-[#0a0e17] border-[#1a2436] text-white focus:ring-0 font-mono">
                       <SelectValue placeholder="Select inscription" />
                     </SelectTrigger>
-                    <SelectContent className="bg-[#0f1623] border-[#1a2436] text-white font-mono">
-                      {/* Aggressive and branded inscriptions */}
-                      <SelectItem value="buy">$ZULE or Nothing</SelectItem>
-                      <SelectItem value="army">ZULE Army</SelectItem>
-                      <SelectItem value="trust">In ZULE We Trust</SelectItem>
-                      <SelectItem value="raid">Raid for $ZULE</SelectItem>
-                      <SelectItem value="gang">$ZULE Gang Only</SelectItem>
-                      <SelectItem value="hold">Hold the $ZULE Line</SelectItem>
-                      <SelectItem value="moon">
-                        Send $ZULE to the Moon
-                      </SelectItem>
-                      <SelectItem value="ape">Ape Into $ZULE</SelectItem>
-                      <SelectItem value="pump">Pump $ZULE Hard</SelectItem>
-                      <SelectItem value="storm">ZULE Storm Incoming</SelectItem>
-                      <SelectItem value="elite">ZULE Elite Unit</SelectItem>
-                      <SelectItem value="takeover">$ZULE Takeover</SelectItem>
-                      <SelectItem value="fuel">Fuel the $ZULE Raid</SelectItem>
-                      <SelectItem value="dominate">
-                        Dominate with $ZULE
-                      </SelectItem>
+  <SelectContent className="bg-[#0f1623] border-[#1a2436] text-white font-mono">
+  {/* Aggressive and branded inscriptions */}
+  <SelectItem value="$ZULE or Nothing">$ZULE or Nothing</SelectItem>
+  <SelectItem value="ZULE Army">ZULE Army</SelectItem>
+  <SelectItem value="In ZULE We Trust">In ZULE We Trust</SelectItem>
+  <SelectItem value="Raid for $ZULE">Raid for $ZULE</SelectItem>
+  <SelectItem value="$ZULE Gang Only">$ZULE Gang Only</SelectItem>
+  <SelectItem value="Hold the $ZULE Line">Hold the $ZULE Line</SelectItem>
+  <SelectItem value="Send $ZULE to the Moon">Send $ZULE to the Moon</SelectItem>
+  <SelectItem value="Ape Into $ZULE">Ape Into $ZULE</SelectItem>
+  <SelectItem value="Pump $ZULE Hard">Pump $ZULE Hard</SelectItem>
+  <SelectItem value="ZULE Storm Incoming">ZULE Storm Incoming</SelectItem>
+  <SelectItem value="ZULE Elite Unit">ZULE Elite Unit</SelectItem>
+  <SelectItem value="$ZULE Takeover">$ZULE Takeover</SelectItem>
+  <SelectItem value="Fuel the $ZULE Raid">Fuel the $ZULE Raid</SelectItem>
+  <SelectItem value="Dominate with $ZULE">Dominate with $ZULE</SelectItem>
 
-                      {/* Extra aggressive, fully branded */}
-                      <SelectItem value="smash">Smash It for $ZULE</SelectItem>
-                      <SelectItem value="obliterate">
-                        Obliterate with $ZULE
-                      </SelectItem>
-                      <SelectItem value="fear">Fear the $ZULE</SelectItem>
-                      <SelectItem value="strike">
-                        Strike Fast, Strike $ZULE
-                      </SelectItem>
-                      <SelectItem value="ruthless">
-                        Ruthless for $ZULE
-                      </SelectItem>
-                      <SelectItem value="raidboss">ZULE Raid Boss</SelectItem>
-                      <SelectItem value="unstoppable">
-                        Unstoppable $ZULE
-                      </SelectItem>
-                      <SelectItem value="noescape">
-                        No Escape from $ZULE
-                      </SelectItem>
-                      <SelectItem value="reign">$ZULE Reign Begins</SelectItem>
-                      <SelectItem value="riot">Start the $ZULE Riot</SelectItem>
-                      <SelectItem value="fight">Fight for $ZULE</SelectItem>
-                      <SelectItem value="march">March with $ZULE</SelectItem>
-                      <SelectItem value="live">
-                        Live and Breathe $ZULE
-                      </SelectItem>
-                      <SelectItem value="death">
-                        Death Before Selling $ZULE
-                      </SelectItem>
-                    </SelectContent>
+  {/* Extra aggressive, fully branded */}
+  <SelectItem value="Smash It for $ZULE">Smash It for $ZULE</SelectItem>
+  <SelectItem value="Obliterate with $ZULE">Obliterate with $ZULE</SelectItem>
+  <SelectItem value="Fear the $ZULE">Fear the $ZULE</SelectItem>
+  <SelectItem value="Strike Fast, Strike $ZULE">Strike Fast, Strike $ZULE</SelectItem>
+  <SelectItem value="Ruthless for $ZULE">Ruthless for $ZULE</SelectItem>
+  <SelectItem value="ZULE Raid Boss">ZULE Raid Boss</SelectItem>
+  <SelectItem value="Unstoppable $ZULE">Unstoppable $ZULE</SelectItem>
+  <SelectItem value="No Escape from $ZULE">No Escape from $ZULE</SelectItem>
+  <SelectItem value="$ZULE Reign Begins">$ZULE Reign Begins</SelectItem>
+  <SelectItem value="Start the $ZULE Riot">Start the $ZULE Riot</SelectItem>
+  <SelectItem value="Fight for $ZULE">Fight for $ZULE</SelectItem>
+  <SelectItem value="March with $ZULE">March with $ZULE</SelectItem>
+  <SelectItem value="Live and Breathe $ZULE">Live and Breathe $ZULE</SelectItem>
+  <SelectItem value="Death Before Selling $ZULE">Death Before Selling $ZULE</SelectItem>
+</SelectContent>
                   </Select>
                 </div>
 
@@ -727,8 +709,8 @@ export default function ZulePfpGenerator() {
                   size="sm"
                   className="border-[#1a2436] text-gray-200 hover:bg-[#1a2436] hover:text-white font-mono"
                   onClick={() =>
-                    window.open(selectedGalleryItem?.imageUrl, "_blank")
-                  }
+                            handleDownload(selectedGalleryItem.imageUrl, selectedGalleryItem.username)
+                          }
                 >
                   <Download className="h-4 w-4 mr-1" />
                   Download
