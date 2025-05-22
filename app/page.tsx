@@ -77,12 +77,12 @@ export default function ZulePfpGenerator() {
     fetchGallery();
   }, [currentPage]);
 
-  async function fetchGallery() {
+async function fetchGallery() {
     try {
       const res = await fetch(`${API_BASE_URL}/api/gallery?page=${currentPage}`);
       if (!res.ok) throw new Error("Failed to fetch gallery");
       const { total, items } = await res.json();
-      setGalleryItems(items);
+      setGalleryItems((prevItems) => [...prevItems, ...items]); // Append new items
       setTotalItems(total);
     } catch (error) {
       console.error("Error loading gallery:", error);
@@ -173,6 +173,7 @@ export default function ZulePfpGenerator() {
       setCurrentPage((prev) => prev + 1);
     }
   };
+
 
   const handleGalleryItemClick = (item) => {
     setSelectedGalleryItem(item);
@@ -544,7 +545,7 @@ const downloadImage = async (imageUrl, fileName = "zule-pfp.png") => {
             ))}
           </div>
 
-          {galleryItems.length < totalItems && (
+      {totalItems > 0 && galleryItems.length < totalItems && (
             <div className="flex justify-center mt-8">
               <Button
                 onClick={handleShowMore}
