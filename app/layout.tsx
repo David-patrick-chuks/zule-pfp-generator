@@ -47,7 +47,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "F*ck With ZULE – Raider PFP Generator",
-    description: "Get your sexy crypto identity. Generate a PFP. Shill hard. Stay filthy.",
+    description: "Get your ZULLE identity. Generate a PFP. Shill hard. Stay filthy.",
     images: ["/zule.png"],
   },
 }
