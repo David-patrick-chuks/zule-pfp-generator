@@ -72,6 +72,7 @@ export default function ZulePfpGenerator() {
       id: Date.now(),
       username: randomUsername,
       timeAgo: `${randomTime} seconds ago`,
+      type: "success",
     };
 
     setAlerts((prevAlerts) => {
@@ -133,7 +134,7 @@ export default function ZulePfpGenerator() {
   }
 
   const handleGenerate = async () => {
-    if (!username) {
+    if (!username || !inscription || !hatColor || !gender) {
       setAlerts((prevAlerts) => [
         ...prevAlerts,
         {
@@ -141,6 +142,7 @@ export default function ZulePfpGenerator() {
           username: "System",
           timeAgo: "just now",
           message: "Please enter a username",
+          type: "error",
         },
       ]);
       return;
@@ -179,6 +181,7 @@ export default function ZulePfpGenerator() {
           username,
           timeAgo: "just now",
           message: "PFP generated successfully!",
+          type: "success",
         },
       ]);
 
@@ -199,6 +202,7 @@ export default function ZulePfpGenerator() {
           username: "System",
           timeAgo: "just now",
           message: "Failed to generate PFP. Please try again.",
+          type: "error",
         },
       ]);
     } finally {
@@ -271,6 +275,7 @@ export default function ZulePfpGenerator() {
               username: "System",
               timeAgo: "just now",
               message: "Opened Twitter to share your PFP!",
+                      type: 'success'
             },
           ]);
         });
@@ -287,6 +292,7 @@ export default function ZulePfpGenerator() {
           username: "System",
           timeAgo: "just now",
           message: "Opened Twitter to share your PFP!",
+                type: 'success'
         },
       ]);
     }
@@ -334,42 +340,83 @@ export default function ZulePfpGenerator() {
   return (
     <div className="min-h-screen flex flex-col bg-[#0a0e17]">
       {/* Live Alerts Container */}
+  
+    {/* Error Alerts Container (Left Side) */}
+      <div
+        className="fixed top-4 left-4 sm:top-6 sm:left-6 z-50 flex flex-col gap-2 max-w-[90%] sm:max-w-md pointer-events-none"
+      >
+        {alerts
+          .filter(alert => alert.type === 'error')
+          .map((alert) => (
+            <div
+              key={alert.id}
+              className="animate-in fade-in slide-in-from-left-5 duration-300 pointer-events-auto w-full sm:w-auto"
+            >
+              <Alert className="bg-[#0f1623] border border-red-500 text-white py-2 sm:py-3 px-3 sm:px-4">
+                <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4 text-red-500 flex-shrink-0" />
+                <AlertDescription className="flex items-center font-mono text-xs sm:text-sm ml-2">
+                  <span className="text-red-500 font-medium mr-1">
+                    {alert.username}
+                  </span>
+                  <span className="text-gray-300">
+                    {alert.message}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="ml-auto -mr-1 sm:-mr-2 h-5 w-5 sm:h-6 sm:w-6 text-gray-400 hover:text-white hover:bg-[#1a2436]"
+                    onClick={() =>
+                      setAlerts((prevAlerts) =>
+                        prevAlerts.filter((a) => a.id !== alert.id)
+                      )
+                    }
+                  >
+                    <X className="h-3 w-3 sm:h-4 sm:w-4" />
+                  </Button>
+                </AlertDescription>
+              </Alert>
+            </div>
+          ))}
+      </div>
+
+      {/* Success Alerts Container (Right Side) */}
       <div
         ref={alertsContainerRef}
         className="fixed top-4 right-4 sm:top-6 sm:right-6 z-50 flex flex-col gap-2 max-w-[90%] sm:max-w-md pointer-events-none"
       >
-        {alerts.map((alert) => (
-          <div
-            key={alert.id}
-            className="animate-in fade-in slide-in-from-right-5 duration-300 pointer-events-auto w-full sm:w-auto"
-          >
-            <Alert className="bg-[#0f1623] border border-[#1a2436] text-white py-2 sm:py-3 px-3 sm:px-4">
-              <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4 text-[#5CEFFF] flex-shrink-0" />
-              <AlertDescription className="flex items-center font-mono text-xs sm:text-sm ml-2">
-                <span className="text-[#5CEFFF] font-medium mr-1">
-                  {alert.username}
-                </span>
-                <span className="text-gray-300">
-                  {alert.message || `generated a PFP ${alert.timeAgo}`}
-                </span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="ml-auto -mr-1 sm:-mr-2 h-5 w-5 sm:h-6 sm:w-6 text-gray-400 hover:text-white hover:bg-[#1a2436]"
-                  onClick={() =>
-                    setAlerts((prevAlerts) =>
-                      prevAlerts.filter((a) => a.id !== alert.id)
-                    )
-                  }
-                >
-                  <X className="h-3 w-3 sm:h-4 sm:w-4" />
-                </Button>
-              </AlertDescription>
-            </Alert>
-          </div>
-        ))}
+        {alerts
+          .filter(alert => alert.type === 'success' && !isGenerating) // Don't show during generation
+          .map((alert) => (
+            <div
+              key={alert.id}
+              className="animate-in fade-in slide-in-from-right-5 duration-300 pointer-events-auto w-full sm:w-auto"
+            >
+              <Alert className="bg-[#0f1623] border border-[#1a2436] text-white py-2 sm:py-3 px-3 sm:px-4">
+                <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4 text-[#5CEFFF] flex-shrink-0" />
+                <AlertDescription className="flex items-center font-mono text-xs sm:text-sm ml-2">
+                  <span className="text-[#5CEFFF] font-medium mr-1">
+                    {alert.username}
+                  </span>
+                  <span className="text-gray-300">
+                    {alert.message || `generated a PFP ${alert.timeAgo}`}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="ml-auto -mr-1 sm:-mr-2 h-5 w-5 sm:h-6 sm:w-6 text-gray-400 hover:text-white hover:bg-[#1a2436]"
+                    onClick={() =>
+                      setAlerts((prevAlerts) =>
+                        prevAlerts.filter((a) => a.id !== alert.id)
+                      )
+                    }
+                  >
+                    <X className="h-3 w-3 sm:h-4 sm:w-4" />
+                  </Button>
+                </AlertDescription>
+              </Alert>
+            </div>
+          ))}
       </div>
-
       <header className="relative z-10 text-center py-10 px-4 border-b border-[#1a2436]">
         <h1 className="text-4xl md:text-5xl font-bold text-[#5CEFFF] mb-2 tracking-wider">
           ZULE Raider PFP Generator
@@ -418,39 +465,93 @@ export default function ZulePfpGenerator() {
                     <SelectTrigger className="bg-[#0a0e17] border-[#1a2436] text-white focus:ring-0 font-mono">
                       <SelectValue placeholder="Select inscription" />
                     </SelectTrigger>
-  <SelectContent className="bg-[#0f1623] border-[#1a2436] text-white font-mono">
-  {/* Aggressive and branded inscriptions */}
-  <SelectItem value="$ZULE or Nothing">$ZULE or Nothing</SelectItem>
-  <SelectItem value="ZULE Army">ZULE Army</SelectItem>
-  <SelectItem value="In ZULE We Trust">In ZULE We Trust</SelectItem>
-  <SelectItem value="Raid for $ZULE">Raid for $ZULE</SelectItem>
-  <SelectItem value="$ZULE Gang Only">$ZULE Gang Only</SelectItem>
-  <SelectItem value="Hold the $ZULE Line">Hold the $ZULE Line</SelectItem>
-  <SelectItem value="Send $ZULE to the Moon">Send $ZULE to the Moon</SelectItem>
-  <SelectItem value="Ape Into $ZULE">Ape Into $ZULE</SelectItem>
-  <SelectItem value="Pump $ZULE Hard">Pump $ZULE Hard</SelectItem>
-  <SelectItem value="ZULE Storm Incoming">ZULE Storm Incoming</SelectItem>
-  <SelectItem value="ZULE Elite Unit">ZULE Elite Unit</SelectItem>
-  <SelectItem value="$ZULE Takeover">$ZULE Takeover</SelectItem>
-  <SelectItem value="Fuel the $ZULE Raid">Fuel the $ZULE Raid</SelectItem>
-  <SelectItem value="Dominate with $ZULE">Dominate with $ZULE</SelectItem>
+                    <SelectContent className="bg-[#0f1623] border-[#1a2436] text-white font-mono">
+                      {/* Aggressive and branded inscriptions */}
+                      <SelectItem value="$ZULE or Nothing">
+                        $ZULE or Nothing
+                      </SelectItem>
+                      <SelectItem value="ZULE Army">ZULE Army</SelectItem>
+                      <SelectItem value="In ZULE We Trust">
+                        In ZULE We Trust
+                      </SelectItem>
+                      <SelectItem value="Raid for $ZULE">
+                        Raid for $ZULE
+                      </SelectItem>
+                      <SelectItem value="$ZULE Gang Only">
+                        $ZULE Gang Only
+                      </SelectItem>
+                      <SelectItem value="Hold the $ZULE Line">
+                        Hold the $ZULE Line
+                      </SelectItem>
+                      <SelectItem value="Send $ZULE to the Moon">
+                        Send $ZULE to the Moon
+                      </SelectItem>
+                      <SelectItem value="Ape Into $ZULE">
+                        Ape Into $ZULE
+                      </SelectItem>
+                      <SelectItem value="Pump $ZULE Hard">
+                        Pump $ZULE Hard
+                      </SelectItem>
+                      <SelectItem value="ZULE Storm Incoming">
+                        ZULE Storm Incoming
+                      </SelectItem>
+                      <SelectItem value="ZULE Elite Unit">
+                        ZULE Elite Unit
+                      </SelectItem>
+                      <SelectItem value="$ZULE Takeover">
+                        $ZULE Takeover
+                      </SelectItem>
+                      <SelectItem value="Fuel the $ZULE Raid">
+                        Fuel the $ZULE Raid
+                      </SelectItem>
+                      <SelectItem value="Dominate with $ZULE">
+                        Dominate with $ZULE
+                      </SelectItem>
 
-  {/* Extra aggressive, fully branded */}
-  <SelectItem value="Smash It for $ZULE">Smash It for $ZULE</SelectItem>
-  <SelectItem value="Obliterate with $ZULE">Obliterate with $ZULE</SelectItem>
-  <SelectItem value="Fear the $ZULE">Fear the $ZULE</SelectItem>
-  <SelectItem value="Strike Fast, Strike $ZULE">Strike Fast, Strike $ZULE</SelectItem>
-  <SelectItem value="Ruthless for $ZULE">Ruthless for $ZULE</SelectItem>
-  <SelectItem value="ZULE Raid Boss">ZULE Raid Boss</SelectItem>
-  <SelectItem value="Unstoppable $ZULE">Unstoppable $ZULE</SelectItem>
-  <SelectItem value="No Escape from $ZULE">No Escape from $ZULE</SelectItem>
-  <SelectItem value="$ZULE Reign Begins">$ZULE Reign Begins</SelectItem>
-  <SelectItem value="Start the $ZULE Riot">Start the $ZULE Riot</SelectItem>
-  <SelectItem value="Fight for $ZULE">Fight for $ZULE</SelectItem>
-  <SelectItem value="March with $ZULE">March with $ZULE</SelectItem>
-  <SelectItem value="Live and Breathe $ZULE">Live and Breathe $ZULE</SelectItem>
-  <SelectItem value="Death Before Selling $ZULE">Death Before Selling $ZULE</SelectItem>
-</SelectContent>
+                      {/* Extra aggressive, fully branded */}
+                      <SelectItem value="Smash It for $ZULE">
+                        Smash It for $ZULE
+                      </SelectItem>
+                      <SelectItem value="Obliterate with $ZULE">
+                        Obliterate with $ZULE
+                      </SelectItem>
+                      <SelectItem value="Fear the $ZULE">
+                        Fear the $ZULE
+                      </SelectItem>
+                      <SelectItem value="Strike Fast, Strike $ZULE">
+                        Strike Fast, Strike $ZULE
+                      </SelectItem>
+                      <SelectItem value="Ruthless for $ZULE">
+                        Ruthless for $ZULE
+                      </SelectItem>
+                      <SelectItem value="ZULE Raid Boss">
+                        ZULE Raid Boss
+                      </SelectItem>
+                      <SelectItem value="Unstoppable $ZULE">
+                        Unstoppable $ZULE
+                      </SelectItem>
+                      <SelectItem value="No Escape from $ZULE">
+                        No Escape from $ZULE
+                      </SelectItem>
+                      <SelectItem value="$ZULE Reign Begins">
+                        $ZULE Reign Begins
+                      </SelectItem>
+                      <SelectItem value="Start the $ZULE Riot">
+                        Start the $ZULE Riot
+                      </SelectItem>
+                      <SelectItem value="Fight for $ZULE">
+                        Fight for $ZULE
+                      </SelectItem>
+                      <SelectItem value="March with $ZULE">
+                        March with $ZULE
+                      </SelectItem>
+                      <SelectItem value="Live and Breathe $ZULE">
+                        Live and Breathe $ZULE
+                      </SelectItem>
+                      <SelectItem value="Death Before Selling $ZULE">
+                        Death Before Selling $ZULE
+                      </SelectItem>
+                    </SelectContent>
                   </Select>
                 </div>
 
@@ -709,8 +810,11 @@ export default function ZulePfpGenerator() {
                   size="sm"
                   className="border-[#1a2436] text-gray-200 hover:bg-[#1a2436] hover:text-white font-mono"
                   onClick={() =>
-                            handleDownload(selectedGalleryItem.imageUrl, selectedGalleryItem.username)
-                          }
+                    handleDownload(
+                      selectedGalleryItem.imageUrl,
+                      selectedGalleryItem.username
+                    )
+                  }
                 >
                   <Download className="h-4 w-4 mr-1" />
                   Download
