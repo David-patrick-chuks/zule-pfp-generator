@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     siteName: "ZULE Raiders",
     images: [
       {
-        url: "/zule.png",
+        url: "/banner.png",
         width: 1200,
         height: 630,
         alt: "Sexy ZULE Raider Generator",
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "F*ck With ZULE – Raider PFP Generator",
     description: "Get your ZULLE identity. Generate a PFP. Shill hard. Stay filthy.",
-    images: ["/zule.png"],
+    images: ["/banner.png"],
   },
 }
 
