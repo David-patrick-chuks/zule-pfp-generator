@@ -6,7 +6,7 @@
 
 # 🎭 Welcome to the ZULE Raider PFP Generator
 
-[![Telegram](https://img.shields.io/badge/Telegram-Join-blue?logo=telegram)](https://t.me/zuleai)
+[![Telegram](https://img.shields.io/badge/Telegram-Join-blue?logo=telegram)](https://t.me/ZuleAicommunitiy)
 [![Twitter Follow](https://img.shields.io/twitter/follow/zuleai?style=social)](https://x.com/zuleai)
 
 ## 👾 What is this?
