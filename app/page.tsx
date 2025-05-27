@@ -174,6 +174,15 @@ export default function ZulePfpGenerator() {
       // setGalleryItems((prev) => [data.galleryItem, ...prev]);
       setGalleryItems((prev) => [data.galleryItem, ...prev].slice(0, 10));
 
+      // Clear input fields after successful generation
+    setUsername("");
+    setInscription("");
+    setHatColor("");
+    setGender("");
+    setDescription("");
+    setCustomColor("#5CEFFF");
+    setIsCustomColor(false);
+    
       // Add success alert
       setAlerts((prevAlerts) => [
         ...prevAlerts,
