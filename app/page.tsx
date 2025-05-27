@@ -171,7 +171,8 @@ export default function ZulePfpGenerator() {
 
       const data = await response.json();
       setGeneratedImage(data.imageUrl);
-      setGalleryItems((prev) => [data.galleryItem, ...prev]);
+      // setGalleryItems((prev) => [data.galleryItem, ...prev]);
+      setGalleryItems((prev) => [data.galleryItem, ...prev].slice(0, 10));
 
       // Add success alert
       setAlerts((prevAlerts) => [
