@@ -49,7 +49,7 @@ export default function ZulePfpGenerator() {
   const alertsContainerRef = useRef(null);
 
   // Backend API base URL
-  const API_BASE_URL = "https://zule-pfp-backend.onrender.com";
+  const API_BASE_URL = "https://pfp-backend-ow3s.onrender.com";
 
   // Function to generate a random alert
   const generateRandomAlert = () => {
