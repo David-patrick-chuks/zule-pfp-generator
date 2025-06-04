@@ -182,21 +182,8 @@ export default function ZulePfpGenerator() {
     }
   }
 
-  const handleGenerate = async () => {
-    if (!username || !inscription || !hatColor || !gender) {
-      setAlerts((prevAlerts) => [
-        ...prevAlerts,
-        {
-          id: Date.now(),
-          username: "System",
-          timeAgo: "just now",
-          message: "Please fill all required fields",
-          type: "error",
-        },
-      ]);
-      return;
-    }
-
+  // Core image generation logic
+  async function generateImage(params) {
     setIsGenerating(true);
     try {
       const response = await fetch(`${API_BASE_URL}/api/generate-image`, {
@@ -204,14 +191,7 @@ export default function ZulePfpGenerator() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          username,
-          inscription: inscription || "ZULE Army",
-          hatColor: isCustomColor ? "custom" : hatColor,
-          gender,
-          description: description || "A crypto raider repping ZULE",
-          customColor: isCustomColor ? customColor : undefined,
-        }),
+        body: JSON.stringify(params),
       });
 
       if (!response.ok) {
@@ -226,20 +206,11 @@ export default function ZulePfpGenerator() {
         [data.galleryItem.id]: true,
       }));
 
-      // Clear input fields after successful generation
-      setUsername("");
-      setInscription("");
-      setHatColor("");
-      setGender("");
-      setDescription("");
-      setCustomColor("#5CEFFF");
-      setIsCustomColor(false);
-
       setAlerts((prevAlerts) => [
         ...prevAlerts,
         {
           id: Date.now(),
-          username,
+          username: params.username,
           timeAgo: "just now",
           message: "PFP generated successfully!",
           type: "success",
@@ -268,6 +239,40 @@ export default function ZulePfpGenerator() {
     } finally {
       setIsGenerating(false);
     }
+  }
+
+  const handleGenerate = async () => {
+    if (!username || !inscription || !hatColor || !gender) {
+      setAlerts((prevAlerts) => [
+        ...prevAlerts,
+        {
+          id: Date.now(),
+          username: "System",
+          timeAgo: "just now",
+          message: "Please fill all required fields",
+          type: "error",
+        },
+      ]);
+      return;
+    }
+
+    await generateImage({
+      username,
+      inscription: inscription || "ZULE Army",
+      hatColor: isCustomColor ? "custom" : hatColor,
+      gender,
+      description: description || "A crypto raider repping ZULE",
+      customColor: isCustomColor ? customColor : undefined,
+    });
+
+    // Clear input fields after successful generation
+    setUsername("");
+    setInscription("");
+    setHatColor("");
+    setGender("");
+    setDescription("");
+    setCustomColor("#5CEFFF");
+    setIsCustomColor(false);
   };
 
   const handleGenerateRandom = async () => {
@@ -278,15 +283,13 @@ export default function ZulePfpGenerator() {
     const randomHatColor = hatColors[Math.floor(Math.random() * hatColors.length)];
     const randomGender = genders[Math.floor(Math.random() * genders.length)];
 
-    setUsername(randomUsername);
-    setInscription(randomInscription);
-    setHatColor(randomHatColor);
-    setGender(randomGender);
-    setDescription("A crypto raider repping ZULE");
-    setIsCustomColor(false);
-
-    // Trigger generation with random values
-    await handleGenerate();
+    await generateImage({
+      username: randomUsername,
+      inscription: randomInscription,
+      hatColor: randomHatColor,
+      gender: randomGender,
+      description: "A crypto raider repping ZULE",
+    });
   };
 
   const handleShowMore = () => {
@@ -390,9 +393,9 @@ export default function ZulePfpGenerator() {
           username: "System",
           timeAgo: "just now",
           message: "Opened Twitter to share your PFP!",
-          type: "success",
-        },
-      ]);
+              type: "success",
+            },
+          ]);
     }
   };
 
@@ -700,7 +703,7 @@ export default function ZulePfpGenerator() {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="border[#1a2436] text-gray-200 hover:bg-[#1a2436] hover:text-white font-mono"
+                          className="border-[#1a2436] text-gray-200 hover:bg-[#1a2436] hover:text-white font-mono"
                           onClick={() => handleShare(generatedImage, username)}
                         >
                           <Share2 className="h-4 w-4 mr-1" />
@@ -723,7 +726,7 @@ export default function ZulePfpGenerator() {
                           strokeLinejoin="round"
                         >
                           <rect
-                            x composition="3"
+                            x="3"
                             y="3"
                             width="18"
                             height="18"
@@ -816,7 +819,7 @@ export default function ZulePfpGenerator() {
           open={!!selectedGalleryItem}
           onOpenChange={(open) => !open && setSelectedGalleryItem(null)}
         >
-          <DialogContent className="bg-[#0f1623] border border-[#1a2436] text-white max-w-lg">
+          <DialogContent className="bg-[#0f1623] border border-[#1a2436] text-white max-w-lg ">
             <DialogHeader>
               <DialogTitle className="text-[#5CEFFF] text-xl">
                 {selectedGalleryItem?.username}'s PFP
@@ -825,9 +828,6 @@ export default function ZulePfpGenerator() {
                 Inscription: {selectedGalleryItem?.inscription}
               </DialogDescription>
             </DialogHeader>
-
-   
-
             <div className="relative aspect-square w-full max-w-sm mx-auto my-4 rounded-lg overflow-hidden border border-[#1a2436]">
               {selectedGalleryItem && (
                 <Image
