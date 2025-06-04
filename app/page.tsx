@@ -836,7 +836,7 @@ export default function ZulePfpGenerator() {
             <Button
               variant="ghost"
               size="icon"
-              className="absolute top-2 right-2 text-gray-300 hover:text-white hover:bg-[#1a2436]"
+              className="absolute hidden top-2 right-2 text-gray-300 hover:text-white hover:bg-[#1a2436]"
               onClick={() => setSelectedGalleryItem(null)}
             >
               <X className="h-6 w-6" />
