@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -54,20 +53,63 @@ export default function ZulePfpGenerator() {
   // Backend API base URL
   const API_BASE_URL = "https://pfp-backend-ow3s.onrender.com";
 
+  // Lists for random generation
+  const sampleUsernames = [
+    "ZuleWarrior",
+    "CryptoRaider",
+    "TokenHunter",
+    "MoonShot",
+    "DiaBabes",
+    "CoinManny",
+    "ChainBro",
+    "SatoshiFan",
+    "CryptoQueen",
+    "TokenKing",
+  ];
+
+  const inscriptions = [
+    "$ZULE or Nothing",
+    "ZULE Army",
+    "In ZULE We Trust",
+    "Raid for $ZULE",
+    "$ZULE Gang Only",
+    "Hold the $ZULE Line",
+    "Send $ZULE to the Moon",
+    "Ape Into $ZULE",
+    "Pump $ZULE Hard",
+    "ZULE Storm Incoming",
+    "ZULE Elite Unit",
+    "$ZULE Takeover",
+    "Fuel the $ZULE Raid",
+    "Dominate with $ZULE",
+    "Smash It for $ZULE",
+    "Obliterate with $ZULE",
+    "Fear the $ZULE",
+    "Strike Fast, Strike $ZULE",
+    "Ruthless for $ZULE",
+    "ZULE Raid Boss",
+    "Unstoppable $ZULE",
+    "No Escape from $ZULE",
+    "$ZULE Reign Begins",
+    "Start the $ZULE Riot",
+    "Fight for $ZULE",
+    "March with $ZULE",
+    "Live and Breathe $ZULE",
+    "Death Before Selling $ZULE",
+  ];
+
+  const hatColors = [
+    "blue-white",
+    "red-black",
+    "green-yellow",
+    "pink-white",
+    "black-gold",
+  ];
+
+  const genders = ["male", "female", "non-binary"];
+
   // Function to generate a random alert
   const generateRandomAlert = () => {
-    const sampleUsernames = [
-      "ZuleWarrior",
-      "CryptoRaider",
-      "TokenHunter",
-      "MoonShot",
-      "DiaBabes",
-      "CoinManny",
-      "ChainBro",
-      "SatoshiFan",
-      "CryptoQueen",
-      "TokenKing",
-    ];
     const randomUsername =
       sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)];
     const randomTime = Math.floor(Math.random() * 60) + 1;
@@ -119,7 +161,6 @@ export default function ZulePfpGenerator() {
       const { total, items } = await res.json();
       setGalleryItems((prevItems) => [...prevItems, ...items]);
       setTotalItems(total);
-      // Initialize loading states for new images
       setImageLoadingStates((prev) => ({
         ...prev,
         ...items.reduce((acc, item) => ({ ...acc, [item.id]: true }), {}),
@@ -149,7 +190,7 @@ export default function ZulePfpGenerator() {
           id: Date.now(),
           username: "System",
           timeAgo: "just now",
-          message: "Please enter a username",
+          message: "Please fill all required fields",
           type: "error",
         },
       ]);
@@ -227,6 +268,25 @@ export default function ZulePfpGenerator() {
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const handleGenerateRandom = async () => {
+    const randomUsername =
+      sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)];
+    const randomInscription =
+      inscriptions[Math.floor(Math.random() * inscriptions.length)];
+    const randomHatColor = hatColors[Math.floor(Math.random() * hatColors.length)];
+    const randomGender = genders[Math.floor(Math.random() * genders.length)];
+
+    setUsername(randomUsername);
+    setInscription(randomInscription);
+    setHatColor(randomHatColor);
+    setGender(randomGender);
+    setDescription("A crypto raider repping ZULE");
+    setIsCustomColor(false);
+
+    // Trigger generation with random values
+    await handleGenerate();
   };
 
   const handleShowMore = () => {
@@ -500,88 +560,11 @@ export default function ZulePfpGenerator() {
                       <SelectValue placeholder="Select inscription" />
                     </SelectTrigger>
                     <SelectContent className="bg-[#0f1623] border-[#1a2436] text-white font-mono">
-                      <SelectItem value="$ZULE or Nothing">
-                        $ZULE or Nothing
-                      </SelectItem>
-                      <SelectItem value="ZULE Army">ZULE Army</SelectItem>
-                      <SelectItem value="In ZULE We Trust">
-                        In ZULE We Trust
-                      </SelectItem>
-                      <SelectItem value="Raid for $ZULE">
-                        Raid for $ZULE
-                      </SelectItem>
-                      <SelectItem value="$ZULE Gang Only">
-                        $ZULE Gang Only
-                      </SelectItem>
-                      <SelectItem value="Hold the $ZULE Line">
-                        Hold the $ZULE Line
-                      </SelectItem>
-                      <SelectItem value="Send $ZULE to the Moon">
-                        Send $ZULE to the Moon
-                      </SelectItem>
-                      <SelectItem value="Ape Into $ZULE">
-                        Ape Into $ZULE
-                      </SelectItem>
-                      <SelectItem value="Pump $ZULE Hard">
-                        Pump $ZULE Hard
-                      </SelectItem>
-                      <SelectItem value="ZULE Storm Incoming">
-                        ZULE Storm Incoming
-                      </SelectItem>
-                      <SelectItem value="ZULE Elite Unit">
-                        ZULE Elite Unit
-                      </SelectItem>
-                      <SelectItem value="$ZULE Takeover">
-                        $ZULE Takeover
-                      </SelectItem>
-                      <SelectItem value="Fuel the $ZULE Raid">
-                        Fuel the $ZULE Raid
-                      </SelectItem>
-                      <SelectItem value="Dominate with $ZULE">
-                        Dominate with $ZULE
-                      </SelectItem>
-                      <SelectItem value="Smash It for $ZULE">
-                        Smash It for $ZULE
-                      </SelectItem>
-                      <SelectItem value="Obliterate with $ZULE">
-                        Obliterate with $ZULE
-                      </SelectItem>
-                      <SelectItem value="Fear the $ZULE">
-                        Fear the $ZULE
-                      </SelectItem>
-                      <SelectItem value="Strike Fast, Strike $ZULE">
-                        Strike Fast, Strike $ZULE
-                      </SelectItem>
-                      <SelectItem value="Ruthless for $ZULE">
-                        Ruthless for $ZULE
-                      </SelectItem>
-                      <SelectItem value="ZULE Raid Boss">
-                        ZULE Raid Boss
-                      </SelectItem>
-                      <SelectItem value="Unstoppable $ZULE">
-                        Unstoppable $ZULE
-                      </SelectItem>
-                      <SelectItem value="No Escape from $ZULE">
-                        No Escape from $ZULE
-                      </SelectItem>
-                      <SelectItem value="$ZULE Reign Begins">
-                        $ZULE Reign Begins
-                      </SelectItem>
-                      <SelectItem value="Start the $ZULE Riot">
-                        Start the $ZULE Riot
-                      </SelectItem>
-                      <SelectItem value="Fight for $ZULE">
-                        Fight for $ZULE
-                      </SelectItem>
-                      <SelectItem value="March with $ZULE">
-                        March with $ZULE
-                      </SelectItem>
-                      <SelectItem value="Live and Breathe $ZULE">
-                        Live and Breathe $ZULE
-                      </SelectItem>
-                      <SelectItem value="Death Before Selling $ZULE">
-                        Death Before Selling $ZULE
-                      </SelectItem>
+                      {inscriptions.map((inscription) => (
+                        <SelectItem key={inscription} value={inscription}>
+                          {inscription}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -672,13 +655,23 @@ export default function ZulePfpGenerator() {
                   />
                 </div>
 
-                <Button
-                  onClick={handleGenerate}
-                  disabled={isGenerating}
-                  className="w-full bg-[#5CEFFF] hover:bg-[#5CEFFF]/90 text-[#0a0e17] font-bold py-3 rounded-md transition-all duration-200 font-mono"
-                >
-                  {isGenerating ? "Generating..." : "Generate PFP"}
-                </Button>
+                <div className="flex gap-4">
+                  <Button
+                    onClick={handleGenerate}
+                    disabled={isGenerating}
+                    className="flex-1 bg-[#5CEFFF] hover:bg-[#5CEFFF]/90 text-[#0a0e17] font-bold py-3 rounded-md transition-all duration-200 font-mono"
+                  >
+                    {isGenerating ? "Generating..." : "Generate PFP"}
+                  </Button>
+                  <Button
+                    onClick={handleGenerateRandom}
+                    disabled={isGenerating}
+                    variant="outline"
+                    className="flex-1 border-[#1a2436] text-gray-200 hover:bg-[#1a2436] hover:text-white font-mono"
+                  >
+                    {isGenerating ? "Generating..." : "Generate Random"}
+                  </Button>
+                </div>
               </div>
 
               {/* Preview Section */}
@@ -707,8 +700,8 @@ export default function ZulePfpGenerator() {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="border-[#1a2436] text-gray-200 hover:bg-[#1a2436] hover:text-white font-mono"
-                          onClick={handleShare}
+                          className="border[#1a2436] text-gray-200 hover:bg-[#1a2436] hover:text-white font-mono"
+                          onClick={() => handleShare(generatedImage, username)}
                         >
                           <Share2 className="h-4 w-4 mr-1" />
                           Share
@@ -730,7 +723,7 @@ export default function ZulePfpGenerator() {
                           strokeLinejoin="round"
                         >
                           <rect
-                            x="3"
+                            x composition="3"
                             y="3"
                             width="18"
                             height="18"
@@ -823,7 +816,7 @@ export default function ZulePfpGenerator() {
           open={!!selectedGalleryItem}
           onOpenChange={(open) => !open && setSelectedGalleryItem(null)}
         >
-          <DialogContent className="bg-[#0f1623] border border-[#1a2436] text-white max-w-lg ">
+          <DialogContent className="bg-[#0f1623] border border-[#1a2436] text-white max-w-lg">
             <DialogHeader>
               <DialogTitle className="text-[#5CEFFF] text-xl">
                 {selectedGalleryItem?.username}'s PFP
@@ -833,14 +826,7 @@ export default function ZulePfpGenerator() {
               </DialogDescription>
             </DialogHeader>
 
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute hidden top-2 right-2 text-gray-300 hover:text-white hover:bg-[#1a2436]"
-              onClick={() => setSelectedGalleryItem(null)}
-            >
-              <X className="h-6 w-6" />
-            </Button>
+   
 
             <div className="relative aspect-square w-full max-w-sm mx-auto my-4 rounded-lg overflow-hidden border border-[#1a2436]">
               {selectedGalleryItem && (
