@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -46,6 +47,8 @@ export default function ZulePfpGenerator() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [selectedGalleryItem, setSelectedGalleryItem] = useState(null);
+  const [isFetchingGallery, setIsFetchingGallery] = useState(false);
+  const [imageLoadingStates, setImageLoadingStates] = useState({});
   const alertsContainerRef = useRef(null);
 
   // Backend API base URL
@@ -76,13 +79,11 @@ export default function ZulePfpGenerator() {
     };
 
     setAlerts((prevAlerts) => {
-      // Limit to 2 alerts: if length is 2 or more, remove the oldest (first) alert
       const updatedAlerts =
         prevAlerts.length >= 1 ? prevAlerts.slice(1) : prevAlerts;
       return [...updatedAlerts, newAlert];
     });
 
-    // Remove alert after 8 seconds
     setTimeout(() => {
       setAlerts((prevAlerts) =>
         prevAlerts.filter((alert) => alert.id !== newAlert.id)
@@ -92,12 +93,10 @@ export default function ZulePfpGenerator() {
 
   // Generate initial alerts and set interval
   useEffect(() => {
-    // Generate up to 2 initial alerts
     for (let i = 0; i < 2; i++) {
       setTimeout(() => generateRandomAlert(), i * 2000);
     }
 
-    // Set interval for new alerts
     const interval = setInterval(() => {
       generateRandomAlert();
     }, 5000);
@@ -111,14 +110,20 @@ export default function ZulePfpGenerator() {
   }, [currentPage]);
 
   async function fetchGallery() {
+    setIsFetchingGallery(true);
     try {
       const res = await fetch(
         `${API_BASE_URL}/api/gallery?page=${currentPage}`
       );
       if (!res.ok) throw new Error("Failed to fetch gallery");
       const { total, items } = await res.json();
-      setGalleryItems((prevItems) => [...prevItems, ...items]); // Append new items
+      setGalleryItems((prevItems) => [...prevItems, ...items]);
       setTotalItems(total);
+      // Initialize loading states for new images
+      setImageLoadingStates((prev) => ({
+        ...prev,
+        ...items.reduce((acc, item) => ({ ...acc, [item.id]: true }), {}),
+      }));
     } catch (error) {
       console.error("Error loading gallery:", error);
       setAlerts((prevAlerts) => [
@@ -128,8 +133,11 @@ export default function ZulePfpGenerator() {
           username: "System",
           timeAgo: "just now",
           message: "Failed to load gallery. Please try again.",
+          type: "error",
         },
       ]);
+    } finally {
+      setIsFetchingGallery(false);
     }
   }
 
@@ -171,19 +179,21 @@ export default function ZulePfpGenerator() {
 
       const data = await response.json();
       setGeneratedImage(data.imageUrl);
-      // setGalleryItems((prev) => [data.galleryItem, ...prev]);
       setGalleryItems((prev) => [data.galleryItem, ...prev].slice(0, 10));
+      setImageLoadingStates((prev) => ({
+        ...prev,
+        [data.galleryItem.id]: true,
+      }));
 
       // Clear input fields after successful generation
-    setUsername("");
-    setInscription("");
-    setHatColor("");
-    setGender("");
-    setDescription("");
-    setCustomColor("#5CEFFF");
-    setIsCustomColor(false);
-    
-      // Add success alert
+      setUsername("");
+      setInscription("");
+      setHatColor("");
+      setGender("");
+      setDescription("");
+      setCustomColor("#5CEFFF");
+      setIsCustomColor(false);
+
       setAlerts((prevAlerts) => [
         ...prevAlerts,
         {
@@ -195,7 +205,6 @@ export default function ZulePfpGenerator() {
         },
       ]);
 
-      // Remove alert after 5 seconds
       setTimeout(() => {
         setAlerts((prevAlerts) =>
           prevAlerts.filter(
@@ -247,12 +256,32 @@ export default function ZulePfpGenerator() {
     setSelectedGalleryItem(galleryItems[newIndex]);
   };
 
+  // Keyboard navigation for modal and PFP generation
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (selectedGalleryItem) {
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          navigateGallery("prev");
+        } else if (event.key === "ArrowRight") {
+          event.preventDefault();
+          navigateGallery("next");
+        }
+      } else if (event.key === "Enter" && !isGenerating) {
+        event.preventDefault();
+        handleGenerate();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedGalleryItem, isGenerating, username, inscription, hatColor, gender]);
+
   const handleShare = (imageUrl, username) => {
     const shareText = `I just generated my ZULE Raider PFP as ${username}! Check it out at:`;
     const url = encodeURIComponent(window.location.href);
     const text = encodeURIComponent(shareText);
 
-    // Try using navigator.share for mobile devices
     if (navigator.share) {
       navigator
         .share({
@@ -268,12 +297,12 @@ export default function ZulePfpGenerator() {
               username: "System",
               timeAgo: "just now",
               message: "Shared successfully!",
+              type: "success",
             },
           ]);
         })
         .catch((error) => {
           console.error("Error sharing:", error);
-          // Fallback to Twitter intent if navigator.share fails
           window.open(
             `https://twitter.com/intent/tweet?text=${text}&url=${url}`,
             "_blank"
@@ -285,12 +314,11 @@ export default function ZulePfpGenerator() {
               username: "System",
               timeAgo: "just now",
               message: "Opened Twitter to share your PFP!",
-                      type: 'success'
+              type: "success",
             },
           ]);
         });
     } else {
-      // Fallback for desktop: Open Twitter intent
       window.open(
         `https://twitter.com/intent/tweet?text=${text}&url=${url}`,
         "_blank"
@@ -302,13 +330,12 @@ export default function ZulePfpGenerator() {
           username: "System",
           timeAgo: "just now",
           message: "Opened Twitter to share your PFP!",
-                type: 'success'
+          type: "success",
         },
       ]);
     }
   };
 
-  // Download function
   const downloadImage = async (imageUrl, fileName = "zule-pfp.png") => {
     try {
       const response = await fetch(imageUrl, { mode: "cors" });
@@ -328,7 +355,6 @@ export default function ZulePfpGenerator() {
     }
   };
 
-  // Handle download with error alert
   const handleDownload = async (imageUrl, username) => {
     const result = await downloadImage(
       imageUrl,
@@ -342,6 +368,7 @@ export default function ZulePfpGenerator() {
           username: "System",
           timeAgo: "just now",
           message: result.error,
+          type: "error",
         },
       ]);
     }
@@ -349,14 +376,12 @@ export default function ZulePfpGenerator() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0a0e17]">
-      {/* Live Alerts Container */}
-  
-    {/* Error Alerts Container (Left Side) */}
+      {/* Error Alerts Container (Left Side) */}
       <div
         className="fixed top-4 left-4 sm:top-6 sm:left-6 z-50 flex flex-col gap-2 max-w-[90%] sm:max-w-md pointer-events-none"
       >
         {alerts
-          .filter(alert => alert.type === 'error')
+          .filter((alert) => alert.type === "error")
           .map((alert) => (
             <div
               key={alert.id}
@@ -368,9 +393,7 @@ export default function ZulePfpGenerator() {
                   <span className="text-red-500 font-medium mr-1">
                     {alert.username}
                   </span>
-                  <span className="text-gray-300">
-                    {alert.message}
-                  </span>
+                  <span className="text-gray-300">{alert.message}</span>
                   <Button
                     variant="ghost"
                     size="icon"
@@ -395,7 +418,7 @@ export default function ZulePfpGenerator() {
         className="fixed top-4 right-4 sm:top-6 sm:right-6 z-50 flex flex-col gap-2 max-w-[90%] sm:max-w-md pointer-events-none"
       >
         {alerts
-          .filter(alert => alert.type === 'success' && !isGenerating) // Don't show during generation
+          .filter((alert) => alert.type === "success" && !isGenerating)
           .map((alert) => (
             <div
               key={alert.id}
@@ -427,6 +450,7 @@ export default function ZulePfpGenerator() {
             </div>
           ))}
       </div>
+
       <header className="relative z-10 text-center py-10 px-4 border-b border-[#1a2436]">
         <h1 className="text-4xl md:text-5xl font-bold text-[#5CEFFF] mb-2 tracking-wider">
           ZULE Raider PFP Generator
@@ -460,7 +484,7 @@ export default function ZulePfpGenerator() {
                     placeholder="e.g., RaiderJoe"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="bg-[#0a0e17]  border-[#1a2436] text-white focus:border-[#5CEFFF] focus:ring-0 font-mono"
+                    className="bg-[#0a0e17] border-[#1a2436] text-white focus:border-[#5CEFFF] focus:ring-0 font-mono"
                   />
                 </div>
 
@@ -476,7 +500,6 @@ export default function ZulePfpGenerator() {
                       <SelectValue placeholder="Select inscription" />
                     </SelectTrigger>
                     <SelectContent className="bg-[#0f1623] border-[#1a2436] text-white font-mono">
-                      {/* Aggressive and branded inscriptions */}
                       <SelectItem value="$ZULE or Nothing">
                         $ZULE or Nothing
                       </SelectItem>
@@ -517,8 +540,6 @@ export default function ZulePfpGenerator() {
                       <SelectItem value="Dominate with $ZULE">
                         Dominate with $ZULE
                       </SelectItem>
-
-                      {/* Extra aggressive, fully branded */}
                       <SelectItem value="Smash It for $ZULE">
                         Smash It for $ZULE
                       </SelectItem>
@@ -751,11 +772,22 @@ export default function ZulePfpGenerator() {
                 onClick={() => handleGalleryItemClick(item)}
               >
                 <div className="relative w-full aspect-square rounded-lg overflow-hidden border border-[#1a2436] bg-[#0a0e17] transition-all duration-200 group-hover:border-[#5CEFFF]">
+                  {imageLoadingStates[item.id] && (
+                    <div className="absolute inset-0 bg-[#0a0e17]/90 flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#5CEFFF]"></div>
+                    </div>
+                  )}
                   <Image
                     src={item.imageUrl || "/placeholder.svg"}
                     alt={`PFP by ${item.username}`}
                     fill
                     className="object-cover"
+                    onLoadingComplete={() =>
+                      setImageLoadingStates((prev) => ({
+                        ...prev,
+                        [item.id]: false,
+                      }))
+                    }
                   />
                 </div>
                 <p className="mt-2 text-gray-300 capitalize text-sm font-medium font-mono">
@@ -769,10 +801,18 @@ export default function ZulePfpGenerator() {
             <div className="flex justify-center mt-8">
               <Button
                 onClick={handleShowMore}
+                disabled={isFetchingGallery}
                 variant="outline"
-                className="border-[#1a2436] text-gray-200 hover:bg-[#1a2436] hover:text-white font-mono"
+                className="border-[#1a2436] text-gray-200 hover:bg-[#1a2436] hover:text-white font-mono flex items-center gap-2"
               >
-                See More
+                {isFetchingGallery ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-[#5CEFFF]"></div>
+                    Loading...
+                  </>
+                ) : (
+                  "See More"
+                )}
               </Button>
             </div>
           )}
@@ -783,7 +823,7 @@ export default function ZulePfpGenerator() {
           open={!!selectedGalleryItem}
           onOpenChange={(open) => !open && setSelectedGalleryItem(null)}
         >
-          <DialogContent className="bg-[#0f1623] border border-[#1a2436] text-white max-w-lg ">
+          <DialogContent className="bg-[#0f1623] border border-[#1a2436] text-white max-w-lg max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-[#5CEFFF] text-xl">
                 {selectedGalleryItem?.username}'s PFP
@@ -793,7 +833,16 @@ export default function ZulePfpGenerator() {
               </DialogDescription>
             </DialogHeader>
 
-            <div className="relative aspect-square w-full max-w-md mx-auto my-4 rounded-lg overflow-hidden border border-[#1a2436]">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-2 right-2 text-gray-300 hover:text-white hover:bg-[#1a2436]"
+              onClick={() => setSelectedGalleryItem(null)}
+            >
+              <X className="h-6 w-6" />
+            </Button>
+
+            <div className="relative aspect-square w-full max-w-sm mx-auto my-4 rounded-lg overflow-hidden border border-[#1a2436]">
               {selectedGalleryItem && (
                 <Image
                   src={selectedGalleryItem.imageUrl || "/placeholder.svg"}
@@ -833,7 +882,9 @@ export default function ZulePfpGenerator() {
                   variant="outline"
                   size="sm"
                   className="border-[#1a2436] text-gray-200 hover:bg-[#1a2436] hover:text-white font-mono"
-                  onClick={handleShare}
+                  onClick={() =>
+                    handleShare(selectedGalleryItem.imageUrl, selectedGalleryItem.username)
+                  }
                 >
                   <Share2 className="h-4 w-4 mr-1" />
                   Share
