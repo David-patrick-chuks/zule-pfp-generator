@@ -783,7 +783,7 @@ export default function ZulePfpGenerator() {
           open={!!selectedGalleryItem}
           onOpenChange={(open) => !open && setSelectedGalleryItem(null)}
         >
-          <DialogContent className="bg-[#0f1623] border border-[#1a2436] text-white max-w-lg">
+          <DialogContent className="bg-[#0f1623] border border-[#1a2436] text-white max-w-lg max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-[#5CEFFF] text-xl">
                 {selectedGalleryItem?.username}'s PFP
